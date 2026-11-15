@@ -1,0 +1,333 @@
+@import "tailwindcss";
+
+:root {
+  /* Scrollbars and form controls follow the theme too. */
+  color-scheme: light dark;
+  --page: #ffffff;
+  --ink: #0a0a0a;
+  --mute: rgba(10, 10, 10, 0.6);
+  --mute-2: rgba(10, 10, 10, 0.45);
+  --line: rgba(0, 0, 0, 0.08);
+  --line-2: rgba(0, 0, 0, 0.14);
+  /* Wintech brand. Navy carries text and buttons; slate is for icons and
+     marks (4.47:1, just under the text threshold); light slate is decor. */
+  --accent: #232732;
+  --accent-ink: #ffffff;
+  --accent-2: #667897;
+  --accent-3: #c0c6d4;
+  /* Section labels: the slate family, deep enough for 21px text (5.9:1). */
+  --label: #55657f;
+  --soft: #f3f3f3;
+  --card: #fbfbfb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0b0f16;
+    --ink: #f4f5f7;
+    --mute: rgba(244, 245, 247, 0.66);
+    --mute-2: rgba(244, 245, 247, 0.48);
+    --line: rgba(255, 255, 255, 0.09);
+    --line-2: rgba(255, 255, 255, 0.16);
+    --soft: #1a1f29;
+    --card: #141922;
+    /* On a dark page navy disappears, so the light slate leads instead. */
+    --accent: #c0c6d4;
+    --accent-ink: #232732;
+    --accent-3: #2a3040;
+    --label: #9fb0ce;
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-ink: var(--ink);
+  --color-mute: var(--mute);
+  --color-mute-2: var(--mute-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-label: var(--label);
+  --color-soft: var(--soft);
+  --color-card: var(--card);
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+input,
+textarea {
+  font: inherit;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────
+   Measured from webild.io: a 1px ring, a white inset highlight along
+   the top edge, and a faint drop. That combination is what makes a flat
+   grey button feel pressable. */
+.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 11px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  box-shadow:
+    rgba(0, 0, 0, 0.024) 0 4px 4px 0,
+    rgba(0, 0, 0, 0.07) 0 0 0 1px,
+    rgba(255, 255, 255, 0.75) 0 1px 0 0 inset;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.btn-soft:hover { background: color-mix(in srgb, var(--soft) 80%, var(--ink) 4%); }
+.btn-soft:active { transform: translateY(1px); }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  /* The glow takes the brand colour, so a green brand gets a green glow. */
+  box-shadow:
+    color-mix(in srgb, var(--accent) 50%, transparent) 0 6px 12px -5px,
+    rgba(255, 255, 255, 0.14) 0 1px 0 0 inset;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-primary:active { transform: translateY(1px); }
+
+@media (prefers-color-scheme: dark) {
+  .btn-soft {
+    box-shadow:
+      rgba(0, 0, 0, 0.3) 0 4px 4px 0,
+      rgba(255, 255, 255, 0.08) 0 0 0 1px,
+      rgba(255, 255, 255, 0.06) 0 1px 0 0 inset;
+  }
+}
+
+/* ── Glass ───────────────────────────────────────────────────────
+   Thin on purpose. The frame is glass; the thing you type into is near
+   solid. Frosting everything is what makes glass look cheap. */
+.glass {
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 18px;
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 30px 60px -40px rgba(35, 39, 50, 0.45);
+}
+.glass-pill {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: rgba(0, 0, 0, 0.05) 0 4px 14px -6px;
+}
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(12, 18, 30, 0.38);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .glass-pill {
+    background: rgba(12, 18, 30, 0.55);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+}
+
+/* ── Auth glass ──────────────────────────────────────────────────
+   The panel beside the sign-up form. It has no colour of its own: it
+   blurs the hero illustration behind it, and a navy wash keeps white
+   text readable whether the illustration is the day or the night one. */
+.auth-glass {
+  background: rgba(22, 34, 62, 0.42);
+  backdrop-filter: blur(46px) saturate(150%);
+}
+.auth-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(62% 48% at 26% 24%, rgba(255, 255, 255, 0.3), transparent 72%);
+}
+@media (prefers-color-scheme: dark) {
+  .auth-glass { background: rgba(10, 16, 32, 0.5); }
+}
+
+/* ── Hero art ────────────────────────────────────────────────────
+   The same day and night illustration as wintechstudio.com. It fades into
+   the page at the bottom so there is no seam. */
+.hero-art {
+  background-image: url("/hero/hero-light.svg");
+  background-size: cover;
+  background-position: center bottom;
+}
+@media (prefers-color-scheme: dark) {
+  .hero-art { background-image: url("/hero/hero-dark.svg"); }
+}
+.hero-fade {
+  background: linear-gradient(180deg, transparent 0%, var(--page) 100%);
+}
+
+/* A card row that scrolls sideways and snaps, with no visible scrollbar. */
+.snap-row {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.snap-row::-webkit-scrollbar { display: none; }
+.snap-row > * { scroll-snap-align: start; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* ── Wintech gradient ────────────────────────────────────────────
+   Navy through slate to the sky blue in the hero illustration. Used
+   for gradient text and the spinning border, never for body copy. */
+:root {
+  --brand-gradient: linear-gradient(108deg, #232732 0%, #4a5a7a 32%, #667897 58%, #8fa9d6 82%, #c0c6d4 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --brand-gradient: linear-gradient(108deg, #c0c6d4 0%, #8fa9d6 40%, #667897 75%, #c0c6d4 100%); }
+}
+.text-gradient {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Word-by-word title reveal ───────────────────────────────────
+   Each word rises and fades in as the title scrolls into view, like
+   Webild's. Driven by scroll in CSS, no JavaScript: where a browser
+   cannot do it the words simply sit there, readable. */
+.wr-word { display: inline-block; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wr-word {
+      animation: wrIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 6%) entry calc(55% + var(--i, 0) * 6%);
+    }
+  }
+}
+@keyframes wrIn {
+  from { opacity: 0; transform: translateY(50%); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Spinning gradient border ────────────────────────────────────
+   A turning conic gradient, masked down to a 1.5px ring so it can only
+   ever paint the border, never the box or anything near it. Webild wraps
+   its domain search in one. */
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.ring-spin {
+  position: relative;
+  background: var(--card);
+}
+.ring-spin::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--spin), transparent 0%, #232732 6%, #667897 12%, #8fa9d6 18%, #c0c6d4 24%, transparent 30%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: ring-turn 5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring-spin::before { animation: none; }
+}
+@keyframes ring-turn { to { --spin: 360deg; } }
+
+/* ── Card ring ───────────────────────────────────────────────────
+   A hairline that turns into the brand gradient on hover, the same
+   trick as the name search. It is what makes a plain card feel alive
+   without moving anything on the page. */
+.tpl-card-ring {
+  position: relative;
+  box-shadow: 0 0 0 1px var(--line), 0 10px 24px -20px rgba(0, 0, 0, 0.5);
+}
+.tpl-card-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--brand-gradient);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  transition: opacity 0.25s ease;
+}
+.tpl-card-ring:hover::before { opacity: 1; }
+
+/* The upgrade card's hairline: the brand gradient, always on, so the one
+   thing in the sidebar asking for money is also the one thing that glows. */
+.upgrade-ring {
+  position: relative;
+  box-shadow: 0 10px 24px -18px rgba(35, 39, 50, 0.45);
+}
+.upgrade-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--brand-gradient);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+/* ── Glass navigation ───────────────────────────────────────────
+   Same as the studio site: over the hero it is clear, so the blue
+   illustration shows through; scroll and it frosts, like the studio's
+   .nav.is-scrolled. Done with a scroll timeline, so no script. Browsers
+   without scroll timelines keep it frosted all the time. */
+.glass-nav {
+  background: color-mix(in srgb, var(--page) 70%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(24px) saturate(180%);
+}
+@supports (animation-timeline: scroll()) {
+  .glass-nav[data-overlay] {
+    animation: nav-frost linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 140px;
+  }
+}
+@keyframes nav-frost {
+  from {
+    background: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: blur(0) saturate(100%);
+  }
+}
+
+/* Depth of field: the illustration goes softly out of focus behind the
+   headline and the search box, so the glass has something to frost. */
+.hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(7px);
+  mask-image: radial-gradient(ellipse 58% 55% at 50% 50%, #000 0%, #000 45%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 58% 55% at 50% 50%, #000 0%, #000 45%, transparent 100%);
+}
