@@ -2,9 +2,9 @@
    their colours are fixed here rather than following the page tokens. */
 
 export const FIELD =
-  "h-11 w-full rounded-[12px] border border-[#e3e5ea] bg-[#f7f8fa] px-3.5 text-[14.5px] text-[#0a0a0a] outline-none transition-colors placeholder:text-[#a4a9b5] focus:border-[#3b5bff] focus:bg-white";
+  "h-11 w-full rounded-[2px] border border-[rgba(10,14,23,0.24)] bg-white px-3 text-[15px] text-[#0a0e17] outline-none transition-colors placeholder:text-[rgba(10,14,23,0.45)] focus:border-[#3b5bff] focus:shadow-[0_0_0_3px_rgba(59,91,255,0.15)]";
 
-export const LABEL = "text-[13px] font-medium text-[#3b414e]";
+export const LABEL = "text-[14px] font-medium text-[#0a0e17]";
 
 export function GoogleMark() {
   return (

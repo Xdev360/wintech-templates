@@ -12,7 +12,7 @@ export function DetailFrame({ id, host }: { id: string; host: string }) {
   const t = getTemplate(id);
   if (!t) return null;
   return (
-    <div className="hair bg-white">
+    <div className="hair min-w-0 bg-white">
       <div className="flex h-11 items-center gap-3 border-b border-[var(--v4-line)] px-3">
         <span className="flex gap-1.5" aria-hidden="true">
           {[0, 1, 2].map((i) => <span key={i} className="h-2.5 w-2.5 rounded-full bg-[var(--v4-panel)]" />)}

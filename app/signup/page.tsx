@@ -6,7 +6,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
   const params = await searchParams;
   const next = nextFor(params);
   return (
-    <AuthShell title="Join us">
+    <AuthShell title="Create your free site" sub="Start on the Free plan. Upgrade when you want your own domain.">
       <SignupForm next={next} referral={params.ref} />
     </AuthShell>
   );

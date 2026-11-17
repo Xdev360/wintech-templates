@@ -20,13 +20,12 @@ const S = 1.5;
 function Claim() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 30);
   return (
     <form
       className="flex w-full flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
-        router.push(slug ? `/signup?site=${slug}` : "/signup");
+        router.push(name.trim() ? `/signup?name=${encodeURIComponent(name.trim())}` : "/signup");
       }}
     >
       <div className="flex gap-2 max-sm:flex-col">

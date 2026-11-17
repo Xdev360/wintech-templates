@@ -203,7 +203,7 @@ export function SignupForm({ next = "/dashboard", referral }: { next?: string; r
         <button
           type="submit"
           disabled={pending}
-          className="h-11 rounded-[12px] bg-[#2f4fe0] text-[14.5px] font-medium text-white transition-[filter,transform] hover:brightness-110 active:translate-y-px disabled:opacity-60"
+          className="h-11 rounded-[2px] bg-[#3b5bff] text-[14.5px] font-medium text-white transition-[filter,transform] hover:brightness-110 active:translate-y-px disabled:opacity-60"
         >
           {pending ? "Working…" : "Continue"}
         </button>
@@ -222,7 +222,7 @@ export function SignupForm({ next = "/dashboard", referral }: { next?: string; r
         type="button"
         onClick={withGoogle}
         disabled={pending}
-        className="inline-flex h-11 items-center justify-center gap-2.5 rounded-[12px] border border-[#e3e5ea] bg-white text-[14.5px] font-medium text-[#0a0a0a] transition-colors hover:bg-[#f7f8fa] disabled:opacity-60"
+        className="inline-flex h-11 items-center justify-center gap-2.5 rounded-[2px] border border-[#e3e5ea] bg-white text-[14.5px] font-medium text-[#0a0a0a] transition-colors hover:bg-[#f7f8fa] disabled:opacity-60"
       >
         <GoogleMark />
         Sign up with Google

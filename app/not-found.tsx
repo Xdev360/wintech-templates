@@ -1,34 +1,45 @@
 import Link from "next/link";
-import { ROOT_DOMAIN } from "@/lib/config";
+import { ArrowRight, LayoutTemplate, LifeBuoy, MessageCircle, Percent } from "lucide-react";
+import { ClosingCTA, Footer } from "@/components/v4/Footer";
+import { Header } from "@/components/v4/Header";
+import { Btn, WHATSAPP } from "@/components/v4/ui";
 
-/* ──────────────────────────────────────────────────────────────
-   Shown for a page that does not exist — including a customer's
-   address that is not taken yet, or a site its owner has hidden.
+/* 404 (Figma "Desktop / 404"). Also shown for a customer address that is
+   not taken yet, so it points people to the templates first. */
 
-   Most people who land here typed a name into the address bar, so the
-   page answers the question they actually have: is this name free?
-   ────────────────────────────────────────────────────────────── */
+const LINKS: [string, typeof Percent, string][] = [
+  ["Templates", LayoutTemplate, "/templates"],
+  ["Pricing", Percent, "/pricing"],
+  ["Help center", LifeBuoy, "/help"],
+  ["WhatsApp us", MessageCircle, WHATSAPP],
+];
 
 export default function NotFound() {
   return (
-    <main className="grid min-h-screen place-items-center px-5 py-16">
-      <div className="w-full max-w-[440px] text-center">
-        <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-mute-2">Not found</p>
-        <h1 className="mt-3 text-[26px] font-semibold leading-[1.1] tracking-[-0.03em]">
-          There is nothing here yet
-        </h1>
-        <p className="mx-auto mt-3 max-w-[38ch] text-[13.5px] leading-[1.6] text-mute">
-          This page has moved, or this address has not been claimed. If it is a name you want, it
-          may still be free.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Link href="/#domain" className="btn-primary">Check if the name is free</Link>
-          <Link href="/templates" className="btn-soft">See the templates</Link>
+    <main className="v4">
+      <Header />
+      <section className="wrap flex flex-col items-center py-[120px] text-center max-md:py-20">
+        <p className="eyebrow">404</p>
+        <h1 className="h1 mt-5 !text-[64px] max-md:!text-[40px]">This page is not here</h1>
+        <p className="intro mt-5 max-w-[560px]">The link may be old or mistyped. Try the home page or pick up where most people start: the templates.</p>
+        <div className="mt-8 flex flex-wrap justify-center gap-2">
+          <Btn href="/">Go to home</Btn>
+          <Btn href="/templates" kind="secondary">Browse templates</Btn>
         </div>
-        <p className="mt-8 text-[12px] text-mute-2">
-          Websites for small businesses, from Wintech Studio in Lagos · {ROOT_DOMAIN}
-        </p>
-      </div>
+        <div className="hair mt-14 grid w-full max-w-[880px] grid-cols-2 md:grid-cols-4">
+          {LINKS.map(([l, I, h], i) => {
+            const cls = `flex h-14 items-center gap-3 px-4 text-[15px] font-medium hover:bg-[var(--v4-soft)] ${i ? "md:border-l" : ""} ${i % 2 ? "max-md:border-l" : ""} ${i > 1 ? "max-md:border-t" : ""} border-[var(--v4-line)]`;
+            const inner = (<><I className="h-4 w-4" strokeWidth={1.5} /><span className="flex-1 text-left">{l}</span><ArrowRight className="h-4 w-4" strokeWidth={1.5} /></>);
+            return h.startsWith("http") ? (
+              <a key={l} href={h} target="_blank" rel="noreferrer" className={cls}>{inner}</a>
+            ) : (
+              <Link key={l} href={h} className={cls}>{inner}</Link>
+            );
+          })}
+        </div>
+      </section>
+      <ClosingCTA />
+      <Footer />
     </main>
   );
 }
