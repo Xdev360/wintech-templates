@@ -1,13 +1,15 @@
-import { AuthShell } from "@/components/auth/AuthShell";
-import { SignupForm } from "@/components/auth/SignupForm";
+import type { Metadata } from "next";
+import { AuthBackdrop } from "@/components/v4/AuthBackdrop";
+import { AuthModal } from "@/components/v4/AuthModal";
 import { nextFor } from "@/lib/next-path";
+
+export const metadata: Metadata = { title: "Create your free account · Wintech Templates" };
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ template?: string; name?: string; ref?: string; next?: string }> }) {
   const params = await searchParams;
-  const next = nextFor(params);
   return (
-    <AuthShell title="Create your free site" sub="Start on the Free plan. Upgrade when you want your own domain.">
-      <SignupForm next={next} referral={params.ref} />
-    </AuthShell>
+    <AuthBackdrop>
+      <AuthModal mode="signup" next={nextFor(params)} referral={params.ref} />
+    </AuthBackdrop>
   );
 }

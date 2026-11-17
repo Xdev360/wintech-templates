@@ -1,12 +1,14 @@
-import { AuthForm } from "@/components/AuthForm";
-import { AuthShell } from "@/components/auth/AuthShell";
+import type { Metadata } from "next";
+import { AuthBackdrop } from "@/components/v4/AuthBackdrop";
+import { AuthModal } from "@/components/v4/AuthModal";
 import { nextFor } from "@/lib/next-path";
 
+export const metadata: Metadata = { title: "Log in · Wintech Templates" };
+
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ template?: string; name?: string; next?: string }> }) {
-  const next = nextFor(await searchParams);
   return (
-    <AuthShell title="Welcome back" sub="Log in to edit your site, see orders and reply to customers.">
-      <AuthForm mode="login" next={next} />
-    </AuthShell>
+    <AuthBackdrop>
+      <AuthModal mode="login" next={nextFor(await searchParams)} />
+    </AuthBackdrop>
   );
 }

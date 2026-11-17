@@ -116,3 +116,23 @@
 @media (prefers-reduced-motion: reduce) {
   .v4 * { animation: none !important; transition: none !important; }
 }
+
+/* Auth modal motion (Figma page 24 motion notes). */
+@keyframes v4-modal-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes v4-bob { 0% { transform: translateY(0); } 40% { transform: translateY(-2px); } 100% { transform: translateY(0); } }
+@keyframes v4-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes v4-pop { 0% { transform: scale(.8); opacity: 0; } 70% { transform: scale(1.04); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes v4-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@keyframes v4-tick { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+@keyframes v4-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.modal-in { animation: v4-modal-in .22s cubic-bezier(.2,.8,.2,1); }
+.mascot-bob { display: inline-flex; animation: v4-bob .24s cubic-bezier(.3,1.6,.5,1); }
+.mascot-say { animation: v4-fade .12s ease-out; }
+.mascot-pop { display: inline-flex; animation: v4-pop .42s cubic-bezier(.3,1.4,.5,1); }
+.otp-shake { animation: v4-shake .36s ease-in-out; }
+.otp-box:not(:placeholder-shown) { animation: v4-pop .16s ease-out; }
+.tick-in { animation: v4-tick .24s ease-out both; }
+.tick-draw { animation: v4-draw .2s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .modal-in, .mascot-bob, .mascot-say, .mascot-pop, .otp-shake, .tick-in, .tick-draw { animation: none !important; }
+}
