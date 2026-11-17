@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./templates.css";
-import { inter } from "@/lib/fonts";
+import "./v4.css";
+import { figtree, inter } from "@/lib/fonts";
 
 // Inter Tight is what gives Webild its tight, calm headlines. next/font
 // self-hosts it, so visitors never make a request to Google.
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${interTight.variable} ${inter.variable}`}>
+    <html lang="en" className={`${interTight.variable} ${inter.variable} ${figtree.variable}`}>
       <body className="min-h-full antialiased">{children}</body>
     </html>
   );

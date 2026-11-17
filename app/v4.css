@@ -1,0 +1,118 @@
+/* ──────────────────────────────────────────────────────────────
+   v4 marketing site (Figma: Wintech Templates, page 17 · Website).
+   Figtree 400/500/600, hairlines, 2px radius, blue only on primary
+   actions. Everything is scoped under .v4 so the dashboard and the
+   templates keep their own look.
+   ────────────────────────────────────────────────────────────── */
+
+.v4 {
+  --v4-ink: #0a0e17;
+  --v4-page: #ffffff;
+  --v4-soft: #fafafa;
+  --v4-panel: #f3f4f6;
+  --v4-blue: #3b5bff;
+  --v4-blue-hover: #2f4be6;
+  --v4-warm: #f97316;
+  --v4-line: rgba(10, 14, 23, 0.1);
+  --v4-line-2: rgba(10, 14, 23, 0.24);
+  --v4-m75: rgba(10, 14, 23, 0.75);
+  --v4-m62: rgba(10, 14, 23, 0.62);
+  --v4-m45: rgba(10, 14, 23, 0.45);
+  color-scheme: light;
+  background: var(--v4-page);
+  color: var(--v4-ink);
+  font-family: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.v4 .wrap {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-left: 120px;
+  padding-right: 120px;
+}
+@media (max-width: 1100px) {
+  .v4 .wrap { padding-left: 40px; padding-right: 40px; }
+}
+@media (max-width: 640px) {
+  .v4 .wrap { padding-left: 20px; padding-right: 20px; }
+}
+
+/* Type */
+.v4 .eyebrow { font-size: 11px; line-height: 14.3px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--v4-m62); }
+.v4 .h1 { font-size: 77.76px; line-height: 1; font-weight: 600; letter-spacing: -0.02em; }
+.v4 .h2 { font-size: 56px; line-height: 64.4px; font-weight: 600; letter-spacing: -0.02em; }
+.v4 .h2s { font-size: 42px; line-height: 48.3px; font-weight: 600; letter-spacing: -0.02em; }
+.v4 .h3 { font-size: 24px; line-height: 31px; font-weight: 600; letter-spacing: -0.0125em; }
+.v4 .intro { font-size: 18px; line-height: 27px; color: var(--v4-m75); }
+.v4 .body { font-size: 16px; line-height: 24px; }
+.v4 .muted { color: var(--v4-m75); }
+.v4 .faint { color: var(--v4-m62); }
+@media (max-width: 900px) {
+  .v4 .h1 { font-size: 44px; letter-spacing: -0.03em; }
+  .v4 .h2 { font-size: 36px; line-height: 1.12; }
+  .v4 .h2s { font-size: 30px; line-height: 1.15; }
+  .v4 .intro { font-size: 16px; line-height: 24px; }
+}
+
+/* Buttons: 40 tall, 0 24, 16/500; header size 36, 0 16, 14/500. */
+.v4 .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding: 0 24px; border-radius: 2px; font-size: 16px; font-weight: 500;
+  white-space: nowrap; transition: background-color .15s, border-color .15s, color .15s;
+  border: 1px solid transparent;
+}
+.v4 .btn-sm { height: 36px; padding: 0 16px; font-size: 14px; }
+.v4 .btn-primary { background: var(--v4-blue); color: #fff; }
+.v4 .btn-primary:hover { background: var(--v4-blue-hover); }
+.v4 .btn-secondary { background: var(--v4-panel); color: var(--v4-ink); }
+.v4 .btn-secondary:hover { background: #e9eaee; }
+.v4 .btn-outline { border-color: var(--v4-line); color: var(--v4-ink); background: #fff; }
+.v4 .btn-outline:hover { border-color: var(--v4-line-2); }
+.v4 .btn-inverse { background: #fff; color: var(--v4-ink); }
+.v4 .btn-ghost { color: var(--v4-ink); }
+.v4 .btn-ghost:hover { background: var(--v4-panel); }
+.v4 .btn:focus-visible, .v4 a:focus-visible, .v4 button:focus-visible, .v4 summary:focus-visible { outline: 2px solid var(--v4-blue); outline-offset: 2px; }
+
+.v4 .link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 21px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.v4 .tag { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 2px; font-size: 14px; line-height: 21px; background: rgba(10, 14, 23, 0.06); white-space: nowrap; }
+.v4 .tag-sm { padding: 1px 6px; font-size: 12px; line-height: 18px; }
+.v4 .tag-warm { background: rgba(249, 115, 22, 0.16); color: #c2410c; }
+.v4 .tag-blue { background: rgba(59, 91, 255, 0.12); color: #2f4be6; }
+
+.v4 .hair { border: 1px solid var(--v4-line); }
+.v4 .input {
+  height: 40px; padding: 0 12px; border: 1px solid var(--v4-line-2); border-radius: 2px; background: #fff;
+  font-size: 15px; color: var(--v4-ink); outline: none; width: 100%;
+}
+.v4 .input:focus { border-color: var(--v4-blue); box-shadow: 0 0 0 3px rgba(59, 91, 255, 0.15); }
+.v4 .input::placeholder { color: var(--v4-m45); }
+
+/* Mega menus open on hover or keyboard focus, under the bar. */
+.v4 .mega { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); width: min(1200px, calc(100vw - 48px)); padding-top: 8px; opacity: 0; visibility: hidden; transition: opacity .15s, visibility .15s; z-index: 50; }
+.v4 .nav-group:hover > .mega, .v4 .nav-group:focus-within > .mega, .v4 .nav-group[data-open="true"] > .mega { opacity: 1; visibility: visible; }
+.v4 .nav-group:hover > button .plus, .v4 .nav-group[data-open="true"] > button .plus { transform: rotate(45deg); }
+.v4 .plus { transition: transform .2s; }
+.v4 .mi .arr { opacity: 0; transform: translateX(-4px); transition: opacity .15s, transform .15s; }
+.v4 .mi:hover { background: var(--v4-soft); }
+.v4 .mi:hover .arr { opacity: 1; transform: none; }
+
+/* FAQ */
+.v4 details > summary { list-style: none; cursor: pointer; }
+.v4 details > summary::-webkit-details-marker { display: none; }
+.v4 details[open] .faq-plus { display: none; }
+.v4 details:not([open]) .faq-minus { display: none; }
+
+/* Footer clock dot */
+@keyframes v4pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.v4 .live-dot { width: 6px; height: 6px; border-radius: 9999px; background: #22c55e; animation: v4pulse 2s infinite; }
+
+/* Template gallery card */
+.v4 .tcard .peek { opacity: 0; transition: opacity .2s; }
+.v4 .tcard:hover .peek { opacity: 1; }
+.v4 .tcard:hover { border-color: var(--v4-line-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .v4 * { animation: none !important; transition: none !important; }
+}
