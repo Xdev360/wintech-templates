@@ -166,3 +166,31 @@ Rules
     patch: parsePatch(out.content_json),
   };
 }
+
+/* A reply to one enquiry from the site's form (Figma page 24, IN2):
+   an email and a short WhatsApp version. Uses only what the site says,
+   so it never invents prices or delivery terms. Free to the owner. */
+export async function draftReply(opts: {
+  siteName: string;
+  ownerName: string;
+  siteFacts: string;
+  customer: string;
+  message: string;
+}): Promise<{ email: string; whatsapp: string } | "refused"> {
+  const system =
+    "You draft replies for a small Nigerian business owner answering a customer who wrote through their website. " +
+    "Write warm, plain, short Nigerian-English replies. Use ONLY facts in SITE FACTS for prices, delivery, timings and links; " +
+    "if the answer is not in the facts, say the owner will confirm and keep it honest. Never invent numbers. No em dashes. " +
+    "Sign the email with the owner's first name and the business name.";
+  const user =
+    `SITE: ${opts.siteName}\nOWNER: ${opts.ownerName}\nSITE FACTS:\n${opts.siteFacts}\n\nCUSTOMER: ${opts.customer}\nMESSAGE:\n${opts.message}`;
+  return structured<{ email: string; whatsapp: string }>(system, [{ role: "user", content: user }], {
+    type: "object",
+    properties: {
+      email: { type: "string", description: "The email reply, 40 to 120 words, with greeting and sign-off." },
+      whatsapp: { type: "string", description: "A short WhatsApp version, under 45 words, no sign-off." },
+    },
+    required: ["email", "whatsapp"],
+    additionalProperties: false,
+  });
+}
