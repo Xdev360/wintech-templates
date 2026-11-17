@@ -47,7 +47,7 @@ function Clock() {
 
 const COLS: [string, [string, string][]][] = [
   ["Product", [["Templates", "/templates"], ["Pricing", "/pricing"], ["Domains", "/domains"], ["AI assistant", "/#ai"], ["Payments", "/#payments"]]],
-  ["Templates", [["Salons", "/templates?type=booking"], ["Fashion", "/templates/store-fashion"], ["Bakeries", "/templates/store-food"], ["Restaurants", "/templates/booking-restaurant"], ["Services", "/templates/booking-consultant"]]],
+  ["Templates", [["Salons", "/templates?group=Salons%20and%20beauty"], ["Fashion", "/templates/store-fashion"], ["Bakeries", "/templates/store-food"], ["Restaurants", "/templates/booking-restaurant"], ["Services", "/templates/booking-consultant"]]],
   ["Resources", [["Help center", "/help"], ["Guides", "/help"], ["For designers", "/sell"], ["Sell templates", "/sell"]]],
   ["Company", [["Wintech Studio", STUDIO], ["Contact", `mailto:${EMAIL}`], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
 ];

@@ -140,7 +140,7 @@ function EditorShot() {
 
 export function Hero() {
   const band: [string, typeof Scissors, string][] = [
-    ["Salons and beauty", Scissors, "/templates?type=booking"],
+    ["Salons and beauty", Scissors, "/templates?group=Salons%20and%20beauty"],
     ["Fashion stores", Shirt, "/templates/store-fashion"],
     ["Bakeries", Cookie, "/templates/store-food"],
     ["Restaurants", Utensils, "/templates/booking-restaurant"],
