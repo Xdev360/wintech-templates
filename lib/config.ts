@@ -20,6 +20,7 @@ export const RESERVED_SLUGS = new Set([
   "connect",
   "settings",
   "new",
+  "create",
 
   "www",
   "app",
