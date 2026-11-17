@@ -40,7 +40,7 @@ export function SiteHome({
   const todays = orders.filter((o) => dayKey(o.created_at) === dayKey(now) && o.status !== "cancelled");
   const salesToday = todays.filter((o) => o.status === "confirmed").reduce((s, o) => s + o.total_kobo, 0);
   const toConfirm = orders.filter((o) => o.status === "claimed");
-  const weekAgo = Date.now() - 7 * 864e5;
+  const weekAgo = now.getTime() - 7 * 864e5;
   const paidWeek = orders.filter((o) => o.status === "confirmed" && +new Date(o.created_at) > weekAgo).reduce((s, o) => s + o.total_kobo, 0);
   const unread = enquiries.filter((e) => !e.read_at);
   const steps = setupSteps(content, site.published, base, template);
