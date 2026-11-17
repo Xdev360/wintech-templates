@@ -57,9 +57,15 @@ function AutoScale({ canvas, children }: { canvas: number; children: ReactNode }
   useLayoutEffect(() => {
     const b = box.current, i = inner.current;
     if (!b || !i) return;
-    const m = () => setDim({ s: b.clientWidth / canvas, h: i.scrollHeight });
+    let lw = -1, lh = -1;
+    const m = () => {
+      const w = Math.round(b.clientWidth), h = Math.round(i.scrollHeight);
+      if (Math.abs(w - lw) < 2 && Math.abs(h - lh) < 2) return;
+      lw = w; lh = h;
+      setDim({ s: w / canvas, h });
+    };
     m();
-    const ro = new ResizeObserver(m);
+    const ro = new ResizeObserver(() => requestAnimationFrame(m));
     ro.observe(b);
     ro.observe(i);
     return () => ro.disconnect();

@@ -5,7 +5,7 @@ import { Logo } from "./ui";
 /* The marketing page behind the sign-up and log-in modal (Figma page 24, SU1 to SU8). */
 export function AuthBackdrop({ children }: { children: ReactNode }) {
   return (
-    <main className="v4 min-h-screen">
+    <main className="v4 bg-grid min-h-screen">
       <div aria-hidden="true">
         <header className="border-b border-[var(--v4-line)]">
           <div className="wrap flex h-[74px] items-center justify-between">

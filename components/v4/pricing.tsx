@@ -176,7 +176,7 @@ const USD_PACK: Record<string, string> = { starter: "$1.70", growth: "$6.70", st
 
 export function CreditsExplainer() {
   return (
-    <section id="credits" className="scroll-mt-28 bg-[var(--v4-soft)] py-[120px] max-md:py-20">
+    <section id="credits" className="scroll-mt-28 bg-dots py-[120px] max-md:py-20">
       <div className="wrap grid gap-16 lg:grid-cols-[1fr_1.35fr]">
         <div className="flex flex-col gap-5">
           <p className="eyebrow">AI credits</p>

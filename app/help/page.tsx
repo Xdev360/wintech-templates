@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function HelpPage() {
   return (
     <PageShell cta={false}>
-      <div className="border-b border-[var(--v4-line)] bg-[var(--v4-soft)]">
+      <div className="border-b border-[var(--v4-line)]">
         <PageTop eyebrow="Help center" title="How can we help?">
           <HelpSearch />
         </PageTop>

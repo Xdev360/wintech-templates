@@ -67,7 +67,7 @@ export default function SellPage() {
         </div>
       </section>
 
-      <section id="standards" className="scroll-mt-28 bg-[var(--v4-soft)] py-[120px] max-md:py-20">
+      <section id="standards" className="scroll-mt-28 bg-dots py-[120px] max-md:py-20">
         <div className="wrap grid gap-12 lg:grid-cols-[1fr_1.7fr]">
           <div className="flex flex-col gap-4">
             <p className="eyebrow">Standards</p>

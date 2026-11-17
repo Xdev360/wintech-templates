@@ -55,7 +55,7 @@ export function CreateSite({ initialTemplate = "", initialName = "" }: { initial
   const T = TYPES.find((t) => t.id === type)!;
 
   return (
-    <div className="v4 min-h-screen">
+    <div className="v4 bg-grid min-h-screen">
       <header className="sticky top-0 z-20 border-b border-[var(--v4-line)] bg-white">
         <div className="flex h-16 items-center justify-between px-10 max-md:px-4">
           <Link href="/dashboard" className="flex items-center gap-2.5" aria-label="Wintech Templates dashboard">

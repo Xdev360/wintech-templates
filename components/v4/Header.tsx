@@ -304,7 +304,7 @@ function NavGroup({ m, open, show, hide, seen }: { m: Menu; open: string | null;
   const isOpen = open === m.label;
   return (
     <div
-      className="nav-group"
+      className="nav-group flex h-[74px] items-center"
       data-open={isOpen}
       onMouseEnter={() => show(m.label)}
       onMouseLeave={hide}

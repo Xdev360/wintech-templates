@@ -32,7 +32,7 @@ export default async function DomainsPage({ searchParams }: { searchParams: Prom
       />
       <DomainSearch initial={q || "glowskin"} />
 
-      <section className="bg-[var(--v4-soft)] py-[120px] max-md:py-20">
+      <section className="bg-dots py-[120px] max-md:py-20">
         <div className="wrap">
           <p className="eyebrow">Your options</p>
           <h2 className="h2s mt-4">Three ways to get an address</h2>

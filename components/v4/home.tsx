@@ -349,7 +349,7 @@ export function Payments() {
   const lines: [string, string][] = [["Chin chin, 1kg × 2", "₦9,000"], ["Meat pie box of 6", "₦7,500"], ["Delivery, Lekki", "₦2,000"]];
   const methods: [string, typeof CreditCard][] = [["Card", CreditCard], ["Transfer", Banknote], ["USSD", Smartphone]];
   return (
-    <section id="payments" className="scroll-mt-28 bg-[var(--v4-soft)] py-[120px] max-md:py-20">
+    <section id="payments" className="scroll-mt-28 bg-dots py-[120px] max-md:py-20">
       <div className="wrap grid items-center gap-16 lg:grid-cols-2">
         <div className="hair flex justify-center bg-white p-16 max-md:p-5 max-lg:order-2">
           <div className="w-full max-w-[332px] border border-[var(--v4-line-2)] p-6 max-md:p-4">

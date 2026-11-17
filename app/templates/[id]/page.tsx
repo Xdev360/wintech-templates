@@ -29,7 +29,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
 
   return (
     <PageShell>
-      <nav aria-label="Breadcrumb" className="wrap flex items-center gap-2 pt-6 text-[13px] text-[var(--v4-m62)]">
+      <div className="bg-grid"><nav aria-label="Breadcrumb" className="wrap flex items-center gap-2 pt-6 text-[13px] text-[var(--v4-m62)]">
         <Link href="/templates" className="hover:text-[var(--v4-ink)]">Templates</Link>
         <span>/</span>
         <Link href={`/templates?group=${encodeURIComponent(c.group)}`} className="hover:text-[var(--v4-ink)]">{c.tag}</Link>
@@ -67,6 +67,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
           </div>
         </div>
       </section>
+      </div>
 
       <section className="wrap pb-[120px] max-md:pb-20">
         <div className="flex items-end justify-between gap-6">

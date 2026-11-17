@@ -11,7 +11,9 @@ export default async function HomePage() {
   return (
     <main className="v4">
       <Header signedIn={signedIn} />
-      <Hero />
+      <div className="bg-grid">
+        <Hero />
+      </div>
       <HowItWorks />
       <TemplateGallery />
       <AIAssistant />

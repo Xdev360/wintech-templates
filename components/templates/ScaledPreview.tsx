@@ -28,13 +28,24 @@ export function ScaledPreview({
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(initial);
+  const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const measure = () => setScale(el.clientWidth / canvas);
+    // Only a real width change rescales. Reacting to every resize let a
+    // scrollbar appearing and disappearing feed back into the scale, and the
+    // previews twitched.
+    let last = -1;
+    const measure = () => {
+      const w = Math.round(el.clientWidth);
+      if (Math.abs(w - last) < 2) return;
+      last = w;
+      setScale(w / canvas);
+      setReady(true);
+    };
     measure();
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(() => requestAnimationFrame(measure));
     ro.observe(el);
     return () => ro.disconnect();
   }, [canvas]);
@@ -45,7 +56,7 @@ export function ScaledPreview({
         inert
         aria-hidden="true"
         className="absolute left-0 top-0 origin-top-left"
-        style={{ width: canvas, transform: `scale(${scale})`, pointerEvents: "none" }}
+        style={{ width: canvas, transform: `scale(${scale})`, pointerEvents: "none", opacity: ready ? 1 : 0, transition: "opacity .25s ease" }}
       >
         {children}
       </div>
