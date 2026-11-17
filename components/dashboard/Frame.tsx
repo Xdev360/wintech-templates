@@ -54,6 +54,7 @@ export function Frame({
   sidebar,
   bar,
   mobileTitle,
+  crumbs,
   children,
 }: {
   /** The logo with its name, shown when the sidebar is open. */
@@ -64,6 +65,8 @@ export function Frame({
   /** The right end of the top bar: referral gift and the account menu. */
   bar: ReactNode;
   mobileTitle: ReactNode;
+  /** The left end of the top bar: where you are. */
+  crumbs?: ReactNode;
   children: ReactNode;
 }) {
   const rail = useSyncExternalStore(subscribe, readRail, () => false);
@@ -77,26 +80,9 @@ export function Frame({
   }
 
   return (
-    <div className="min-h-screen bg-soft/60 font-[family-name:var(--font-inter)] text-ink lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
-      {/* ── Top bar, desktop ─────────────────────────────────── */}
-      <header className="hidden h-[52px] shrink-0 items-center justify-between px-3 lg:flex">
-        <div className={`flex items-center ${rail ? "w-[76px] justify-center gap-1" : "w-[224px] justify-between gap-2 pl-2 pr-1"}`}>
-          {rail ? brandMark : brand}
-          <button
-            type="button"
-            onClick={() => writeRail(!rail)}
-            className="grid h-8 w-8 place-items-center rounded-[9px] text-mute transition-colors hover:bg-page hover:text-ink"
-            aria-label={rail ? "Open the sidebar" : "Fold the sidebar"}
-            title={rail ? "Open the sidebar" : "Fold the sidebar"}
-          >
-            {rail ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </button>
-        </div>
-        <div className="flex items-center gap-1.5">{bar}</div>
-      </header>
-
+    <div className="v4 dash min-h-screen lg:flex lg:h-screen lg:overflow-hidden">
       {/* ── Top bar, phone ───────────────────────────────────── */}
-      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-page/90 px-3 backdrop-blur lg:hidden">
+      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-[var(--v4-line)] bg-white/90 px-3 backdrop-blur lg:hidden">
         <div className="flex min-w-0 items-center gap-2.5">{mobileTitle}</div>
         <div className="flex items-center gap-1">
           {bar}
@@ -108,7 +94,7 @@ export function Frame({
       {open ? (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <button type="button" className="absolute inset-0 bg-black/30" aria-label="Close menu" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-[280px] max-w-[86vw] flex-col overflow-y-auto bg-page pt-12 shadow-2xl">
+          <div className="absolute inset-y-0 left-0 flex w-[280px] max-w-[86vw] flex-col overflow-y-auto bg-[#fafafa] pt-12 shadow-2xl">
             <button type="button" onClick={() => setOpen(false)} className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-[10px] hover:bg-soft" aria-label="Close menu">
               <X className="h-5 w-5" />
             </button>
@@ -117,16 +103,34 @@ export function Frame({
         </div>
       ) : null}
 
-      {/* ── Body ─────────────────────────────────────────────── */}
-      <div className="lg:flex lg:min-h-0 lg:flex-1">
-        <aside
-          className={`hidden shrink-0 overflow-y-auto overflow-x-hidden transition-[width] duration-200 lg:flex lg:flex-col ${rail ? "w-[76px]" : "w-[240px]"}`}
-        >
+      {/* ── Sidebar, desktop: brand, then the site's navigation ── */}
+      <aside className={`hidden shrink-0 flex-col border-r border-[var(--v4-line)] bg-[#fafafa] transition-[width] duration-200 lg:flex ${rail ? "w-[72px]" : "w-[240px]"}`}>
+        <div className={`flex h-14 shrink-0 items-center ${rail ? "justify-center" : "justify-between pl-4 pr-2"}`}>
+          {rail ? brandMark : brand}
+          {!rail && (
+            <button type="button" onClick={() => writeRail(true)} className="grid h-8 w-8 place-items-center rounded-[2px] text-[var(--v4-m62)] hover:bg-white hover:text-[var(--v4-ink)]" aria-label="Fold the sidebar" title="Fold the sidebar">
+              <PanelLeftClose className="h-4 w-4" strokeWidth={1.5} />
+            </button>
+          )}
+        </div>
+        {rail && (
+          <button type="button" onClick={() => writeRail(false)} className="mx-auto mb-2 grid h-8 w-8 place-items-center rounded-[2px] text-[var(--v4-m62)] hover:bg-white" aria-label="Open the sidebar" title="Open the sidebar">
+            <PanelLeftOpen className="h-4 w-4" strokeWidth={1.5} />
+          </button>
+        )}
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
           <RailContext.Provider value={rail}>{sidebar}</RailContext.Provider>
-        </aside>
+        </div>
+      </aside>
 
-        <main className="min-w-0 bg-page lg:mb-2 lg:mr-2 lg:flex-1 lg:overflow-y-auto lg:rounded-[14px] lg:shadow-[0_0_0_1px_var(--line)]">
-          <div className="mx-auto max-w-[1280px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">{children}</div>
+      {/* ── Main: top bar, then the page ─────────────────────── */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-[var(--v4-line)] bg-white px-6 lg:flex">
+          <div className="flex min-w-0 items-center gap-2 text-[14px]">{crumbs}</div>
+          <div className="flex items-center gap-2">{bar}</div>
+        </header>
+        <main className="min-w-0 bg-white lg:flex-1 lg:overflow-y-auto">
+          <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</div>
         </main>
       </div>
     </div>

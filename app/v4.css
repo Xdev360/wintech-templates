@@ -171,3 +171,5 @@ html { scrollbar-gutter: stable; }
 .v4 .tcard { transition: border-color .2s, box-shadow .25s, transform .25s; }
 .v4 .tcard:hover { box-shadow: 0 18px 40px -24px rgba(10, 14, 23, 0.28); transform: translateY(-2px); }
 @media (prefers-reduced-motion: reduce) { .v4 .tcard:hover { transform: none; } }
+@keyframes v4-count { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.count-up { animation: v4-count .6s ease-out both; }

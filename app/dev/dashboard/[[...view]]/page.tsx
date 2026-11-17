@@ -6,7 +6,7 @@ import { DesktopOnly } from "@/components/dashboard/DesktopOnly";
 import { PluginDetail } from "@/components/dashboard/PluginDetail";
 import { getPlugin } from "@/components/dashboard/plugins";
 import { InboxView } from "@/components/dashboard/InboxView";
-import { OverviewView } from "@/components/dashboard/OverviewView";
+import { SiteHome } from "@/components/dashboard/SiteHome";
 import { OrdersView } from "@/components/dashboard/OrdersView";
 import { PluginsView } from "@/components/dashboard/PluginsView";
 import { SettingsView } from "@/components/dashboard/SettingsView";
@@ -30,7 +30,14 @@ export default async function DevDashboard({ params }: { params: Promise<{ view?
   const url = `https://${SITE.slug}.wintechstudio.com`;
 
   let body;
-  if (view === "") body = <OverviewView base={base} user={USER} site={toShellSite(SITE)} content={withDefaults(SITE).content} template={SITE.template} siteUrl={url} credits={18} />;
+  if (view === "") body = <SiteHome base={base} user={USER} site={toShellSite(SITE)} content={withDefaults(SITE).content} template={SITE.template} siteUrl={url}
+    orders={[
+      { id: "1", reference: "WT-K4M2QP", customer_name: "Bisi Adeyemi", total_kobo: 3650000, status: "claimed", created_at: new Date().toISOString() },
+      { id: "2", reference: "WT-B7NRXA", customer_name: "Funke Okon", total_kobo: 1100000, status: "confirmed", created_at: new Date().toISOString() },
+      { id: "3", reference: "WT-C2LQ8D", customer_name: "Chidi Eze", total_kobo: 5400000, status: "confirmed", created_at: "2026-11-15T10:00:00Z" },
+      { id: "4", reference: "WT-D9PZ1M", customer_name: "Ngozi Uche", total_kobo: 980000, status: "awaiting", created_at: "2026-11-14T10:00:00Z" },
+    ]}
+    enquiries={SAMPLE_MESSAGES.map((m, i) => ({ id: String(i), name: m.name, message: m.message, created_at: m.created_at, read_at: i ? m.created_at : null }))} />;
   else if (view === "site") body = <DesktopOnly what="Editing your site" base={base}><Editor site={withDefaults(SITE)} userId="sample-user" /></DesktopOnly>;
   else if (view === "ai") body = (<div className="flex flex-col gap-7"><PageHeader title="Wintech AI" sub="Your assistant for Glow & Grace." /><AssistantChat siteId="sample" siteName="Glow & Grace" credits={18} base={base} /></div>);
   else if (view === "inbox") body = <InboxView siteName={SITE.name} enquiries={SAMPLE_MESSAGES} />;
