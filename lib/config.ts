@@ -21,6 +21,7 @@ export const RESERVED_SLUGS = new Set([
   "settings",
   "new",
   "create",
+  "demo",
 
   "www",
   "app",

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight, ArrowUpRight, Banknote, Briefcase, Check, Cookie, CreditCard, Globe, Heart, Image as ImageIcon,
   LayoutTemplate, Link2, Lock, MessageCircle, Monitor, Minus, Plus, Scissors, Search, Send, Shield, Shirt,
@@ -11,25 +11,31 @@ import {
 import { ScaledPreview } from "@/components/templates/ScaledPreview";
 import { TemplateSite } from "@/components/templates/TemplateSite";
 import { getTemplate } from "@/lib/templates";
+import { Mascot } from "./Mascot";
 import { Btn, EMAIL, Head, TextLink, WHATSAPP } from "./ui";
 
 const S = 1.5;
 
-/* ── Hero ───────────────────────────────────────────────────────── */
+/* ── Hero (v5, Figma "00 · v5 changes") ───────────────────────────
+   Centred heading at a calmer size, the claim box, then the product
+   card rising out from under the header. Inside the card Wintech AI
+   works in a loop: the owner asks, the AI types, the reply lands, the
+   blue outline moves to the section it changed, and an order toast
+   pops in every few seconds. Reduced motion shows the resting state. */
 
 function Claim() {
   const router = useRouter();
   const [name, setName] = useState("");
   return (
     <form
-      className="flex w-full flex-col gap-4"
+      className="mx-auto flex w-full max-w-[520px] flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
-        router.push(name.trim() ? `/signup?name=${encodeURIComponent(name.trim())}` : "/signup");
+        router.push(name.trim() ? `/create?name=${encodeURIComponent(name.trim())}` : "/create");
       }}
     >
       <div className="flex gap-2 max-sm:flex-col">
-        <label className="input flex flex-1 items-center !px-3">
+        <label className="input flex flex-1 items-center !px-3 !h-11 bg-white">
           <span className="sr-only">Your business name</span>
           <input
             value={name}
@@ -41,95 +47,167 @@ function Claim() {
           />
           <span className="min-w-0 truncate text-[15px] text-[var(--v4-m62)]">.wintechstudio.com</span>
         </label>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary !h-11">
           Start free <ArrowRight className="h-4 w-4" strokeWidth={S} />
         </button>
       </div>
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-[14px] leading-[21px]">
-        <span><b className="font-semibold">Free</b> <span className="muted">plan to start</span></span>
-        <span><b className="font-semibold">0%</b> <span className="muted">cut of sales</span></span>
-        <span><b className="font-semibold">Paystack</b> <span className="muted">card, transfer, USSD</span></span>
-      </div>
+      <p className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-[13px] leading-5 text-[var(--v4-m62)]">
+        <span>Free plan to start</span><span aria-hidden="true">·</span>
+        <span>0% cut of your sales</span><span aria-hidden="true">·</span>
+        <span>WhatsApp orders built in</span>
+      </p>
     </form>
   );
 }
 
-function EditorShot() {
+type Beat = { ask: string; reply: string; section: string };
+const BEATS: Beat[] = [
+  { ask: "Add my delivery areas: Lekki, Ajah and VI.", reply: "Done. I added a Delivery areas section with three zones.", section: "Delivery areas" },
+  { ask: "Make the hero say we bake fresh every morning.", reply: "Updated. Your hero now reads: Fresh from our oven every morning.", section: "Hero" },
+  { ask: "Put a WhatsApp order button under the menu.", reply: "Added. Customers can now order your menu on WhatsApp.", section: "Order on WhatsApp" },
+];
+const TOASTS: [string, string][] = [
+  ["New order", "₦18,500 · via WhatsApp"],
+  ["New enquiry", "Do you deliver to Yaba on Sunday?"],
+  ["Payment confirmed", "WT-K4M2QP · ₦9,000 transfer"],
+];
+/* Where the blue outline sits on the preview, as % of its height. */
+const SPOTS: Record<string, [number, number]> = {
+  Hero: [9.4, 46],
+  "Delivery areas": [57, 30],
+  "Order on WhatsApp": [44, 18],
+};
+
+function useLoop(still: boolean) {
+  /* phase: 0 asking, 1 typing, 2 replied */
+  const [beat, setBeat] = useState(0);
+  const [phase, setPhase] = useState(still ? 2 : 0);
+  const [toast, setToast] = useState(-1);
+  useEffect(() => {
+    if (still) return;
+    const wait = phase === 0 ? 1100 : phase === 1 ? 1500 : 3600;
+    const t = setTimeout(() => {
+      if (phase < 2) setPhase(phase + 1);
+      else { setBeat((b) => (b + 1) % BEATS.length); setPhase(0); }
+    }, wait);
+    return () => clearTimeout(t);
+  }, [phase, still]);
+  useEffect(() => {
+    if (still) return;
+    const first = setTimeout(() => setToast(0), 2600);
+    const every = setInterval(() => setToast((n) => (n + 1) % TOASTS.length), 6000);
+    return () => { clearTimeout(first); clearInterval(every); };
+  }, [still]);
+  return { beat, phase, toast };
+}
+
+function ProductCard() {
   const food = getTemplate("store-food");
+  const [still, setStill] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const on = () => setStill(m.matches);
+    on();
+    m.addEventListener("change", on);
+    return () => m.removeEventListener("change", on);
+  }, []);
+  const { beat, phase, toast } = useLoop(still);
+  const b = BEATS[beat];
+  const done = phase === 2;
+  const prev = BEATS[(beat + BEATS.length - 1) % BEATS.length];
+  const shown = done ? b.section : prev.section;
+  const [top, h] = SPOTS[shown] ?? SPOTS.Hero;
   const sections: [string, typeof LayoutTemplate][] = [
     ["Header", LayoutTemplate], ["Hero", ImageIcon], ["Menu", Cookie], ["Order on WhatsApp", MessageCircle],
     ["Delivery areas", Truck], ["Reviews", Heart], ["Footer", LayoutTemplate],
   ];
-  const thread: [boolean, string][] = [
-    [true, "Add my delivery areas: Lekki, Ajah and Victoria Island."],
-    [false, "Done. I added a Delivery areas section with three zones. Want me to set a fee for each one?"],
-    [true, "Change the hero photo to my chin chin packs."],
-    [false, "Updated. Your hero now shows the chin chin photo from your uploads."],
-  ];
+  const [tilt, setTilt] = useState<[number, number]>([0, 0]);
+
   return (
-    <div className="hair flex h-[660px] flex-col overflow-hidden bg-[var(--v4-soft)] max-lg:h-auto" aria-label="The Wintech editor with a sample store">
-      <div className="flex h-[52px] items-center justify-between border-b border-[var(--v4-line)] bg-white px-4">
-        <div className="flex items-center gap-2.5">
-          <span className="whitespace-nowrap text-[14px] font-semibold">Ade Bakes</span>
-          <span className="tag max-sm:hidden">Sample store</span>
-        </div>
-        <div className="hair flex h-8 items-center gap-2 rounded-[2px] bg-[var(--v4-soft)] px-3 text-[13px] font-medium text-[var(--v4-m75)] max-md:hidden">
-          <Lock className="h-[14px] w-[14px]" strokeWidth={S} /> adebakes.wintechstudio.com
-        </div>
-        <div className="flex items-center gap-2">
-          <Monitor className="h-[18px] w-[18px] max-sm:hidden" strokeWidth={S} />
-          <Smartphone className="h-[18px] w-[18px] max-sm:hidden" strokeWidth={S} />
-          <span className="btn btn-secondary btn-sm max-sm:!hidden">Preview</span>
-          <span className="btn btn-primary btn-sm">Publish</span>
-        </div>
-      </div>
-      <div className="flex min-h-0 flex-1">
-        <div className="flex w-[240px] shrink-0 flex-col border-r border-[var(--v4-line)] bg-white px-2 py-4 max-lg:hidden">
-          <p className="eyebrow px-2">Sections</p>
-          <div className="h-3" />
-          {sections.map(([l, I]) => (
-            <div key={l} className={`flex h-9 items-center gap-2.5 rounded-[2px] px-2 text-[14px] font-medium ${l === "Hero" ? "bg-[rgba(10,14,23,0.06)]" : "text-[var(--v4-m75)]"}`}>
-              <I className="h-4 w-4" strokeWidth={S} /> {l}
-            </div>
-          ))}
-          <div className="flex-1" />
-          <div className="flex h-9 items-center gap-2 rounded-[2px] border border-dashed border-[var(--v4-line)] px-2 text-[14px] font-medium">
-            <Plus className="h-4 w-4" strokeWidth={S} /> Add section
+    <div
+      className="hero-card relative [perspective:1600px]"
+      onMouseMove={(e) => {
+        if (still) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        setTilt([((e.clientY - r.top) / r.height - 0.5) * -2, ((e.clientX - r.left) / r.width - 0.5) * 2]);
+      }}
+      onMouseLeave={() => setTilt([0, 0])}
+    >
+      <div
+        className="hair flex h-[600px] flex-col overflow-hidden bg-[var(--v4-soft)] shadow-[0_40px_80px_-40px_rgba(10,14,23,0.35)] transition-transform duration-300 ease-out max-lg:h-auto"
+        style={{ transform: `rotateX(${tilt[0]}deg) rotateY(${tilt[1]}deg)` }}
+        aria-label="The Wintech editor with a sample store, while Wintech AI makes changes"
+      >
+        <div className="flex h-[52px] items-center justify-between border-b border-[var(--v4-line)] bg-white px-4">
+          <div className="flex items-center gap-2.5">
+            <span className="whitespace-nowrap text-[14px] font-semibold">Ade Bakes</span>
+            <span className="tag tag-sm max-sm:hidden">Sample store</span>
+          </div>
+          <div className="hair flex h-8 items-center gap-2 rounded-[2px] bg-[var(--v4-soft)] px-3 text-[13px] font-medium text-[var(--v4-m75)] max-md:hidden">
+            <Lock className="h-[14px] w-[14px]" strokeWidth={S} /> adebakes.wintechstudio.com
+          </div>
+          <div className="flex items-center gap-2">
+            <Monitor className="h-[18px] w-[18px] max-sm:hidden" strokeWidth={S} />
+            <Smartphone className="h-[18px] w-[18px] max-sm:hidden" strokeWidth={S} />
+            <span className="btn btn-primary btn-sm">Publish</span>
           </div>
         </div>
-        <div className="flex min-w-0 flex-1 items-start justify-center bg-[var(--v4-panel)] p-7 max-sm:p-4">
-          <div className="hair relative w-full max-w-[560px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
-            {food && (
-              <ScaledPreview ratio={560 / 520} initial={560 / 1280}>
-                <TemplateSite template={food} />
-              </ScaledPreview>
-            )}
-            <div className="absolute inset-x-[-1px] top-[9.4%] h-[48%] border-2 border-[var(--v4-blue)]" aria-hidden="true" />
-            <div className="absolute left-[-1px] top-[calc(9.4%-22px)] flex h-[22px] items-center bg-[var(--v4-blue)] px-2 text-[12px] font-medium text-white" aria-hidden="true">Hero</div>
-          </div>
-        </div>
-        <div className="flex w-[320px] shrink-0 flex-col border-l border-[var(--v4-line)] bg-white max-md:hidden">
-          <div className="flex h-12 items-center gap-2 border-b border-[var(--v4-line)] px-4 text-[14px] font-semibold">
-            <Sparkles className="h-4 w-4 text-[var(--v4-blue)]" strokeWidth={S} /> AI assistant
-          </div>
-          <div className="flex flex-col gap-3 p-4">
-            {thread.map(([you, text], i) => (
-              <div key={i} className="contents">
-                <p className={`rounded-[2px] px-3 py-2.5 text-[13px] leading-[19px] ${you ? "w-fit max-w-[260px] bg-[var(--v4-ink)] text-white" : "hair max-w-[260px] bg-[var(--v4-soft)]"}`}>{text}</p>
-                {i === 1 && (
-                  <div className="flex gap-2">
-                    {["Set fees", "Undo"].map((s) => (
-                      <span key={s} className="hair flex h-7 items-center rounded-[2px] px-2.5 text-[13px] font-medium">{s}</span>
-                    ))}
-                  </div>
-                )}
+        <div className="flex min-h-0 flex-1">
+          <div className="flex w-[220px] shrink-0 flex-col border-r border-[var(--v4-line)] bg-white px-2 py-4 max-lg:hidden">
+            <p className="eyebrow px-2">Sections</p>
+            <div className="h-3" />
+            {sections.map(([l, I]) => (
+              <div key={l} className={`flex h-9 items-center gap-2.5 rounded-[2px] px-2 text-[14px] font-medium transition-colors duration-300 ${l === shown ? "bg-[rgba(59,91,255,0.08)] text-[var(--v4-ink)]" : "text-[var(--v4-m75)]"}`}>
+                <I className={`h-4 w-4 ${l === shown ? "text-[var(--v4-blue)]" : ""}`} strokeWidth={S} /> {l}
               </div>
             ))}
           </div>
-          <div className="flex-1" />
-          <div className="flex items-center gap-2 border-t border-[var(--v4-line)] px-4 py-3">
-            <div className="hair flex h-10 min-w-0 flex-1 items-center rounded-[2px] truncate px-3 text-[13px] text-[var(--v4-m45)]">Ask the assistant to change anything</div>
-            <span className="flex h-10 w-10 items-center justify-center rounded-[2px] bg-[var(--v4-blue)] text-white"><Send className="h-4 w-4" strokeWidth={S} /></span>
+          <div className="relative flex min-w-0 flex-1 items-start justify-center bg-[var(--v4-panel)] p-7 max-sm:p-4">
+            <div className={`hair relative w-full max-w-[540px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)] ${phase === 1 ? "build-shimmer" : ""}`}>
+              {food && (
+                <ScaledPreview ratio={540 / 500} initial={540 / 1280}>
+                  <TemplateSite template={food} />
+                </ScaledPreview>
+              )}
+              <div className="absolute inset-x-[-1px] border-2 border-[var(--v4-blue)] transition-all duration-500 ease-out" style={{ top: `${top}%`, height: `${h}%` }} aria-hidden="true">
+                <span className="absolute left-[-2px] top-[-22px] flex h-[22px] items-center bg-[var(--v4-blue)] px-2 text-[12px] font-medium text-white">{shown}</span>
+              </div>
+            </div>
+            {toast >= 0 && (
+              <div key={toast} className="toast-in absolute bottom-5 left-5 flex items-center gap-3 bg-[var(--v4-ink)] px-3.5 py-2.5 text-white shadow-[0_12px_30px_-10px_rgba(10,14,23,0.5)]" role="status">
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-[#22c55e]"><Check className="h-3.5 w-3.5" strokeWidth={2.5} /></span>
+                <span className="text-[13px] leading-[18px]"><b className="block font-semibold">{TOASTS[toast][0]}</b><span className="text-white/70">{TOASTS[toast][1]}</span></span>
+              </div>
+            )}
+          </div>
+          <div className="flex w-[300px] shrink-0 flex-col border-l border-[var(--v4-line)] bg-white max-md:hidden">
+            <div className="flex h-12 items-center gap-2 border-b border-[var(--v4-line)] px-4 text-[14px] font-semibold">
+              <Mascot eyes={phase === 1 ? (beat % 2 ? "left" : "right") : done ? "happy" : "open"} size={22} /> Wintech AI
+              <span className={`ml-auto flex items-center gap-1.5 text-[12px] font-normal ${phase === 1 ? "text-[var(--v4-blue)]" : "text-[var(--v4-m62)]"}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${phase === 1 ? "bg-[var(--v4-blue)] live-dot !bg-[var(--v4-blue)]" : "bg-[#22c55e]"}`} />
+                {phase === 1 ? "Working" : "Ready"}
+              </span>
+            </div>
+            <div className="flex flex-1 flex-col gap-3 overflow-hidden p-4">
+              <p key={`a${beat}`} className="msg-in w-fit max-w-[250px] self-end rounded-[2px] bg-[var(--v4-ink)] px-3 py-2.5 text-[13px] leading-[19px] text-white">{b.ask}</p>
+              {phase === 1 && (
+                <div className="msg-in flex w-fit items-center gap-2 rounded-[2px] bg-[rgba(59,91,255,0.08)] px-3 py-2.5 text-[13px] text-[var(--v4-m75)]">
+                  <span className="typing" aria-hidden="true"><i /><i /><i /></span> Changing {b.section.toLowerCase()}
+                </div>
+              )}
+              {done && (
+                <>
+                  <p key={`r${beat}`} className="msg-in hair max-w-[250px] rounded-[2px] bg-[var(--v4-soft)] px-3 py-2.5 text-[13px] leading-[19px]">{b.reply}</p>
+                  <div className="msg-in flex gap-2" style={{ animationDelay: "120ms" }}>
+                    {["Looks good", "Undo"].map((x) => <span key={x} className="hair flex h-7 items-center rounded-[2px] px-2.5 text-[13px] font-medium">{x}</span>)}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-2 border-t border-[var(--v4-line)] px-4 py-3">
+              <div className="hair flex h-10 min-w-0 flex-1 items-center truncate rounded-[2px] px-3 text-[13px] text-[var(--v4-m45)]">Ask Wintech AI to change anything</div>
+              <span className="flex h-10 w-10 items-center justify-center rounded-[2px] bg-[var(--v4-blue)] text-white"><Send className="h-4 w-4" strokeWidth={S} /></span>
+            </div>
           </div>
         </div>
       </div>
@@ -146,22 +224,17 @@ export function Hero() {
     ["Services", Briefcase, "/templates/booking-consultant"],
   ];
   return (
-    <section className="wrap flex flex-col gap-16 pt-[72px] max-md:gap-10 max-md:pt-12">
-      <div className="flex items-end gap-16 max-lg:flex-col max-lg:items-start max-lg:gap-8">
-        <div className="flex min-w-0 flex-1 flex-col gap-5">
-          <p className="eyebrow">Website builder for Nigerian businesses</p>
-          <h1 className="h1">Build your website.<br />Get paid in naira.</h1>
-          <p className="intro max-w-[640px]">
-            Templates made for salons, fashion stores, bakeries and restaurants. The AI assistant fills in your words,
-            Paystack takes the payments, and we take 0% of your sales.
-          </p>
-        </div>
-        <div className="w-[456px] shrink-0 max-lg:w-full max-lg:max-w-[520px]">
-          <Claim />
-        </div>
+    <section className="wrap flex flex-col gap-14 pt-[72px] max-md:gap-10 max-md:pt-12">
+      <div className="mx-auto flex max-w-[760px] flex-col items-center gap-5 text-center">
+        <p className="eyebrow rise" style={{ animationDelay: "0ms" }}>Website builder for Nigerian businesses</p>
+        <h1 className="h1-hero rise" style={{ animationDelay: "60ms" }}>A website that brings<br className="max-sm:hidden" /> you customers.</h1>
+        <p className="intro rise max-w-[600px]" style={{ animationDelay: "120ms" }}>
+          Pick a template made for your business. Wintech AI writes the words, you add your prices, and you are live today.
+        </p>
+        <div className="rise mt-3 w-full" style={{ animationDelay: "180ms" }}><Claim /></div>
       </div>
-      <EditorShot />
-      <div className="flex flex-col items-center gap-4 pt-16 max-md:pt-6">
+      <div className="card-rise"><ProductCard /></div>
+      <div className="flex flex-col items-center gap-4 pt-10 max-md:pt-4">
         <p className="text-[14px] text-[var(--v4-m62)]">Built for the businesses that keep Nigeria running</p>
         <div className="grid w-full grid-cols-5 border-y border-[var(--v4-line)] max-md:grid-cols-2">
           {band.map(([l, I, h], i) => (
@@ -200,7 +273,7 @@ export function HowItWorks() {
             </span>
           </div>
         </Step>
-        <Step n="03" title="Go live and get paid" text="Publish to yourname.wintechstudio.com and take card, transfer or USSD through Paystack.">
+        <Step n="03" title="Go live and get paid" text="Publish to yourname.wintechstudio.com. Customers order on your site or on WhatsApp and pay by bank transfer.">
           <div className="flex h-full items-center justify-center px-3">
             <div className="hair flex w-full max-w-[300px] items-center gap-3 bg-white p-3">
               <span className="flex h-7 w-7 items-center justify-center bg-[#dcfce7] text-[#15803d]"><Check className="h-4 w-4" strokeWidth={2} /></span>
@@ -345,9 +418,9 @@ export function AIAssistant() {
 /* ── Payments ──────────────────────────────────────────────────── */
 
 export function Payments() {
-  const [method, setMethod] = useState("Card");
+  const [method, setMethod] = useState("Transfer");
   const lines: [string, string][] = [["Chin chin, 1kg × 2", "₦9,000"], ["Meat pie box of 6", "₦7,500"], ["Delivery, Lekki", "₦2,000"]];
-  const methods: [string, typeof CreditCard][] = [["Card", CreditCard], ["Transfer", Banknote], ["USSD", Smartphone]];
+  const methods: [string, typeof CreditCard][] = [["Transfer", Banknote], ["WhatsApp", MessageCircle]];
   return (
     <section id="payments" className="scroll-mt-28 bg-dots py-[120px] max-md:py-20">
       <div className="wrap grid items-center gap-16 lg:grid-cols-2">
@@ -363,41 +436,44 @@ export function Payments() {
               ))}
             </div>
             <p className="mt-4 flex justify-between border-t border-[var(--v4-line)] pt-4 text-[14px] font-semibold"><span>Total</span><span>₦18,500</span></p>
-            <div className="mt-4 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Payment method">
+            <div className="mt-4 grid grid-cols-2 gap-2" role="radiogroup" aria-label="How to order">
               {methods.map(([m, I]) => (
-                <button
-                  key={m}
-                  type="button"
-                  role="radio"
-                  aria-checked={method === m}
-                  onClick={() => setMethod(m)}
-                  className={`flex h-10 items-center justify-center gap-2 rounded-[2px] border text-[13px] ${method === m ? "border-[var(--v4-ink)]" : "border-[var(--v4-line)]"}`}
-                >
+                <button key={m} type="button" role="radio" aria-checked={method === m} onClick={() => setMethod(m)}
+                  className={`flex h-10 items-center justify-center gap-2 rounded-[2px] border text-[13px] ${method === m ? "border-[var(--v4-ink)]" : "border-[var(--v4-line)]"}`}>
                   <I className="h-4 w-4" strokeWidth={S} /> {m}
                 </button>
               ))}
             </div>
-            <div className="btn btn-primary mt-3 w-full">Pay ₦18,500</div>
+            {method === "Transfer" ? (
+              <div key="t" className="msg-in mt-3 bg-[var(--v4-soft)] p-3 text-[13px] leading-5">
+                <p className="text-[var(--v4-m62)]">Pay into</p>
+                <p className="font-medium">Ade Bakes · your bank account</p>
+                <p className="text-[var(--v4-m62)]">Reference WT-K4M2QP</p>
+              </div>
+            ) : (
+              <p key="w" className="msg-in mt-3 bg-[var(--v4-soft)] p-3 text-[13px] leading-5 text-[var(--v4-m75)]">The order opens in WhatsApp with every item and the total filled in.</p>
+            )}
+            <div className="btn btn-primary mt-3 w-full">{method === "Transfer" ? "I have paid ₦18,500" : "Send order on WhatsApp"}</div>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px] text-[var(--v4-m62)]">
-              <Shield className="h-[13px] w-[13px]" strokeWidth={S} /> Secured by Paystack
+              <Shield className="h-[13px] w-[13px]" strokeWidth={S} /> You confirm it in your dashboard
             </p>
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <p className="eyebrow">Payments</p>
-          <h2 className="h2">Get paid with<br className="max-md:hidden" /> Paystack</h2>
+          <p className="eyebrow">Orders and payments</p>
+          <h2 className="h2">Orders come to you.<br className="max-md:hidden" /> Money goes to your bank.</h2>
           <p className="intro max-w-[560px]">
-            Customers pay by card, bank transfer or USSD. Paystack sends the money to your bank account. We take 0% of your sales.
+            Customers order on your site or on WhatsApp and pay by transfer straight into your account. You see each order, check your bank, and confirm. We take 0% of your sales.
           </p>
           <div className="hair mt-3 grid grid-cols-3 bg-white">
-            {[["0%", "Wintech cut of sales"], ["3 ways", "Card, transfer, USSD"], ["₦", "Prices in naira"]].map(([a, b], i) => (
+            {[["0%", "Wintech cut of sales"], ["2 ways", "Transfer or WhatsApp"], ["₦", "Prices in naira"]].map(([a, b], i) => (
               <div key={a} className={`flex flex-col gap-1 p-5 max-md:p-3 ${i ? "border-l border-[var(--v4-line)]" : ""}`}>
                 <span className="text-[28px] font-semibold tracking-[-0.02em] max-md:text-[22px]">{a}</span>
                 <span className="text-[13px] text-[var(--v4-m62)]">{b}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4"><TextLink href="/help">Payments setup guide</TextLink></div>
+          <p className="text-[13px] text-[var(--v4-m62)]">Card and USSD checkout are coming later.</p>
         </div>
       </div>
     </section>
@@ -473,7 +549,7 @@ export function PlanCards({ cur }: { cur: "NGN" | "USD" }) {
           </p>
           <p className="mt-2 text-[12px] text-[var(--v4-m62)]">{cur === "NGN" ? `${p.usd} per month` : `${p.ngn} per month`}</p>
           <p className="mt-6 min-h-[42px] text-[15px] leading-[21px] text-[var(--v4-m75)]">{p.note}</p>
-          <Link href={`/signup?plan=${p.name.toLowerCase()}`} className={`btn mt-4 w-full ${p.best ? "btn-primary" : "btn-secondary"}`}>{p.cta}</Link>
+          <Link href="/create" className={`btn mt-4 w-full ${p.best ? "btn-primary" : "btn-secondary"}`}>{p.cta}</Link>
           <ul className="mt-6 flex flex-col gap-3 border-t border-[var(--v4-line)] pt-6">
             {p.feats.map((f) => (
               <li key={f} className="flex items-start gap-2.5 text-[14px] leading-5 text-[var(--v4-m75)]">
@@ -523,9 +599,9 @@ export function PricingTeaser() {
 /* ── FAQ ───────────────────────────────────────────────────────── */
 
 export const HOME_FAQ: [string, string][] = [
-  ["Do you take a cut of my sales?", "No. Wintech takes 0% of your sales on every plan. Paystack charges its normal processing fee and pays you directly."],
+  ["Do you take a cut of my sales?", "No. Wintech takes 0% of your sales on every plan. Customers pay you straight into your own bank account."],
   ["Can I use my own domain?", "Yes, on Starter and up. Connect a domain you already own or buy a new one. Every site also keeps its free yourname.wintechstudio.com address."],
-  ["How do customers pay?", "By card, bank transfer or USSD through Paystack. The money goes straight to your bank account."],
+  ["How do customers pay?", "By bank transfer to your account, with the order details sent to you and on WhatsApp. You confirm each payment in your dashboard. Card checkout is coming later."],
   ["What are AI credits?", "Each request to the AI assistant uses a few credits. Every plan includes some each month, and you can top up when you need more."],
   ["Do I need a laptop?", "No. You can build your site, add products and take orders from your phone."],
 ];

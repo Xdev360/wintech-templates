@@ -173,3 +173,39 @@ html { scrollbar-gutter: stable; }
 @media (prefers-reduced-motion: reduce) { .v4 .tcard:hover { transform: none; } }
 @keyframes v4-count { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .count-up { animation: v4-count .6s ease-out both; }
+
+/* ── v5 (18 Nov): calmer hero heading, hero motion, AI working,
+   page loading. Figma "00 · v5 changes". ─────────────────────── */
+.v4 .h1-hero { font-size: 60px; line-height: 64px; font-weight: 600; letter-spacing: -0.025em; }
+@media (max-width: 900px) { .v4 .h1-hero { font-size: 40px; line-height: 44px; } }
+@media (max-width: 420px) { .v4 .h1-hero { font-size: 34px; line-height: 38px; } }
+
+@keyframes v5-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes v5-card { from { opacity: 0; transform: translateY(40px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes v5-msg { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes v5-toast { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 12% { opacity: 1; transform: none; } 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(6px); } }
+@keyframes v5-dot { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+@keyframes v5-drift { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-6px) rotate(var(--r, 0deg)); } }
+.rise { animation: v5-rise .42s cubic-bezier(.2,.8,.2,1) both; }
+.card-rise { animation: v5-card .7s cubic-bezier(.2,.9,.25,1) .3s both; }
+.msg-in { animation: v5-msg .26s ease-out both; }
+.toast-in { animation: v5-toast 4.2s ease-out both; }
+.typing { display: inline-flex; gap: 3px; }
+.typing i { width: 5px; height: 5px; border-radius: 9999px; background: #3b5bff; animation: v5-dot 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+.drift { animation: v5-drift 7s ease-in-out infinite; }
+
+/* Skeleton blocks with a slow shimmer while content loads. */
+.skel { position: relative; overflow: hidden; background: #f3f4f6; }
+.skel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.7) 50%, transparent 80%); animation: v4-shimmer 1.4s ease-in-out infinite; }
+
+/* Page change: a 2px blue bar along the top. */
+@keyframes v5-bar { 0% { transform: scaleX(0); } 60% { transform: scaleX(.7); } 100% { transform: scaleX(.92); } }
+.route-bar { position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 100; transform-origin: left; background: #3b5bff; box-shadow: 0 0 8px rgba(59,91,255,.6); animation: v5-bar 2.4s cubic-bezier(.1,.7,.2,1) both; }
+.route-bar.done { animation: none; transform: scaleX(1); opacity: 0; transition: transform .2s ease-out, opacity .3s ease .2s; }
+.page-in { animation: v5-rise .24s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .card-rise, .msg-in, .toast-in, .typing i, .drift, .skel::after, .route-bar, .page-in { animation: none !important; }
+}

@@ -32,9 +32,9 @@ export function facts(kind: Kind, bestFor: string): [string, string][] {
   const head: [string, string] = ["Best for", bestFor];
   switch (kind) {
     case "store":
-      return [head, ["Pages", "Home, Shop, Product, Cart, About, Contact"], ["Payments", "Paystack: card, transfer, USSD"], ["Orders", "Checkout or WhatsApp"], ["Delivery", "Set areas and a fee for each"]];
+      return [head, ["Pages", "Home, Shop, Product, Cart, About, Contact"], ["Payments", "Bank transfer, confirmed by you"], ["Orders", "Checkout or WhatsApp"], ["Delivery", "Set areas and a fee for each"]];
     case "booking":
-      return [head, ["Pages", "Home, Services, Book a slot, Contact"], ["Payments", "Paystack deposits: card, transfer, USSD"], ["Bookings", "Pick a service, a day and a time"], ["Reminders", "Booking confirmed by email"]];
+      return [head, ["Pages", "Home, Services, Book a slot, Contact"], ["Payments", "Deposits by bank transfer"], ["Bookings", "Pick a service, a day and a time"], ["Reminders", "Booking confirmed by email"]];
     case "portfolio":
       return [head, ["Pages", "Home, Work, About, Contact"], ["Enquiries", "A form that lands in your dashboard"], ["Work", "Projects with photos and a short story"], ["Address", "Free name.wintechstudio.com or your own domain"]];
     default:

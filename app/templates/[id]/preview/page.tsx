@@ -21,7 +21,7 @@ export default async function TemplatePreviewPage({ params }: { params: Promise<
     <PreviewFrame
       name={t.name}
       kind={kindLabel(t.kind)}
-      useHref={signedIn ? `/dashboard/new?template=${t.id}` : `/signup?template=${t.id}`}
+      useHref={signedIn ? `/dashboard/new?template=${t.id}` : `/create?template=${t.id}`}
     >
       <TemplateSite template={t} slug="preview" />
     </PreviewFrame>

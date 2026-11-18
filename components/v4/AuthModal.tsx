@@ -8,7 +8,7 @@ import { GoogleMark } from "@/components/auth/fields";
 import { safeNext } from "@/lib/next-path";
 import { claimRef, rememberRef } from "@/lib/referral";
 import { createClient } from "@/lib/supabase/client";
-import { MascotSays, Mascot, type Eyes } from "./Mascot";
+import { MascotSays, Mascot, useCaretLook, type Eyes } from "./Mascot";
 
 /* ──────────────────────────────────────────────────────────────
    Sign up and log in with Wintech AI (Figma page 24, SU1 to SU8).
@@ -109,7 +109,7 @@ export function AuthModal({ mode, next = "/dashboard", referral, onClose }: { mo
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(10,14,23,0.32)] p-4 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={mode === "login" ? "Log in" : "Create your free account"}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(10,14,23,0.1)] p-4" role="dialog" aria-modal="true" aria-label={mode === "login" ? "Log in" : "Create your free account"}>
       <div className="modal-in relative max-h-[calc(100vh-32px)] w-full max-w-[480px] overflow-y-auto border border-[rgba(10,14,23,0.1)] bg-white p-10 shadow-[0_24px_60px_rgba(10,14,23,0.18)] max-sm:p-6">
         <button type="button" onClick={close} aria-label="Close" className="absolute right-6 top-6 text-[rgba(10,14,23,0.62)] hover:text-[#0a0e17]">
           <X className="h-5 w-5" strokeWidth={1.5} />
@@ -134,6 +134,7 @@ function Signup({ to, referral, pending, setPending, error, setError, oauth, clo
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [focus, setFocus] = useState<"name" | "email" | null>(null);
+  const look = useCaretLook();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [shake, setShake] = useState(false);
   const [left, setLeft] = useState(0);
@@ -237,7 +238,7 @@ function Signup({ to, referral, pending, setPending, error, setError, oauth, clo
           Your account is ready. Next, tell Wintech AI about your business and it will build your first site in about two minutes.
         </p>
         <ul className="mt-6 flex w-full flex-col gap-3 border border-[rgba(10,14,23,0.1)] bg-[#fafafa] p-4 text-left text-[14px] text-[rgba(10,14,23,0.75)]">
-          {[`Email confirmed · ${email}`, "Free plan · 0% cut of your sales", "Paystack payouts in naira"].map((t, i) => (
+          {[`Email confirmed · ${email}`, "Free plan · 0% cut of your sales", "WhatsApp orders built in"].map((t, i) => (
             <li key={t} className="tick-in flex items-center gap-2.5" style={{ animationDelay: `${i * 60}ms` }}>
               <CheckCircle2 className="h-4 w-4 shrink-0 text-[#15803d]" strokeWidth={1.5} /> {t}
             </li>
@@ -335,12 +336,12 @@ function Signup({ to, referral, pending, setPending, error, setError, oauth, clo
     );
   }
 
-  /* details */
-  const eyes: Eyes = focus === "email" ? (validEmail ? "happy" : "right") : name ? "happy" : "open";
+  /* details: the pupils follow the caret while you type */
+  const eyes: Eyes = focus === "email" && validEmail ? "happy" : look != null ? "open" : name ? "happy" : "open";
   const say = focus === "email" ? (validEmail ? "That looks right." : "Where should I send your code?") : first ? `Nice to meet you, ${first}.` : "Hi! I'm Wintech AI. What should I call you?";
   return (
     <form onSubmit={(e) => { e.preventDefault(); if (!name.trim()) return setError("Tell us what to call you."); if (!validEmail) return setError("Check your email address."); sendCode(); }} className="flex flex-col gap-5">
-      <MascotSays eyes={eyes} text={say} />
+      <MascotSays eyes={eyes} text={say} look={look} />
       <div>
         <h2 className="text-[24px] font-semibold tracking-[-0.01em]">Create your free account</h2>
         <p className="mt-2 text-[15px] text-[rgba(10,14,23,0.75)]">Join business owners across Nigeria. No card needed.</p>
@@ -385,6 +386,7 @@ function Login({ to, pending, setPending, error, setError, oauth }: Shared) {
   const [show, setShow] = useState(false);
   const [remember, setRemember] = useState(true);
   const [pwFocus, setPwFocus] = useState(false);
+  const look = useCaretLook();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -404,7 +406,7 @@ function Login({ to, pending, setPending, error, setError, oauth }: Shared) {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
-      <MascotSays eyes={pwFocus ? "shut" : "open"} text={pwFocus ? "I'm not looking." : "Good to see you again."} />
+      <MascotSays eyes={pwFocus ? "shut" : "open"} look={look} text={pwFocus ? "I'm not looking." : "Good to see you again."} />
       <div>
         <h2 className="text-[24px] font-semibold tracking-[-0.01em]">Welcome back</h2>
         <p className="mt-2 text-[15px] text-[rgba(10,14,23,0.75)]">Log in to manage your sites, orders and money.</p>

@@ -10,7 +10,7 @@ import { Btn, EMAIL, Logo, STUDIO, WHATSAPP, WHATSAPP_LABEL } from "./ui";
 export function ClosingCTA({
   eyebrow = "Get started",
   title = <>Your business,<br />online this week</>,
-  sub = "Pick a template, add your products, take payments with Paystack.",
+  sub = "Pick a template, add your products, take orders on WhatsApp.",
 }: {
   eyebrow?: string;
   title?: React.ReactNode;
@@ -27,7 +27,7 @@ export function ClosingCTA({
         <p className="eyebrow !text-white/60">{eyebrow}</p>
         <h2 className="h2 mt-5">{title}</h2>
         <p className="mt-5 text-[18px] leading-[27px] text-white/75 max-md:text-[16px]">{sub}</p>
-        <Btn href="/signup" arrow size="sm" className="mt-8">Start free</Btn>
+        <Btn href="/create" arrow size="sm" className="mt-8">Start free</Btn>
       </div>
     </section>
   );
@@ -73,7 +73,7 @@ export function Footer() {
     <footer className="bg-[#0f0f0f] text-white">
       <div className="wrap flex h-[46px] items-center justify-between border-b border-white/10 text-[11px] uppercase tracking-[0.06em] text-white/60">
         <span className="flex items-center gap-2">Lagos <span className="live-dot" /> <Clock /></span>
-        <span>Payments by Paystack</span>
+        <span>Prices in naira</span>
       </div>
       <div className="flex flex-col items-center gap-4 border-b border-white/10 py-11 text-center">
         <Logo dark />

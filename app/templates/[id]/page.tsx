@@ -23,7 +23,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
   const c = entry(id);
   if (!t || !c) notFound();
   const signedIn = await isSignedIn();
-  const use = signedIn ? `/dashboard/new?template=${t.id}` : `/signup?template=${t.id}`;
+  const use = signedIn ? `/dashboard/new?template=${t.id}` : `/create?template=${t.id}`;
   const host = `${c.name.toLowerCase().replace(/[^a-z]/g, "")}.wintechstudio.com`;
   const related = CATALOG.filter((x) => x.id !== id && getTemplate(x.id)?.kind === t.kind).concat(CATALOG.filter((x) => x.id !== id && getTemplate(x.id)?.kind !== t.kind)).slice(0, 3);
 

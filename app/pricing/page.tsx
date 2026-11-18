@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const FAQ: [string, string][] = [
-  ["Do you take a cut of my sales?", "No. Wintech takes 0% on every plan. Paystack charges its normal processing fee and pays you directly."],
+  ["Do you take a cut of my sales?", "No. Wintech takes 0% on every plan. Customers pay straight into your own bank account."],
   ["Can I pay yearly?", "Yes. Pay for a year on any paid plan and you get 2 months free."],
   ["What happens if I run out of credits?", "Your site stays live. The AI assistant pauses until your credits renew next month, or you can buy a pack that never expires."],
 ];

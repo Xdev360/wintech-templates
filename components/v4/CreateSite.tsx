@@ -15,7 +15,7 @@ import { normalizeSlug } from "@/lib/slugs";
 import { createClient } from "@/lib/supabase/client";
 import { getTemplate } from "@/lib/templates";
 import { CATALOG } from "./catalog";
-import { Mascot, MascotSays, type Eyes } from "./Mascot";
+import { Mascot, MascotSays, useCaretLook, type Eyes } from "./Mascot";
 import { Mark } from "./ui";
 
 /* ──────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ const STEPS = ["Type", "Details", "Template", "Build"];
 
 const BOX = "h-10 w-full rounded-[2px] border border-[rgba(10,14,23,0.1)] bg-white px-3 text-[15px] outline-none focus:border-[#3b5bff] focus:shadow-[0_0_0_3px_rgba(59,91,255,0.15)]";
 
-export function CreateSite({ initialTemplate = "", initialName = "" }: { initialTemplate?: string; initialName?: string }) {
+export function CreateSite({ initialTemplate = "", initialName = "", demo = false }: { initialTemplate?: string; initialName?: string; demo?: boolean }) {
   const router = useRouter();
   const preType = TYPES.find((t) => t.templates.includes(initialTemplate))?.id ?? "store";
   const [step, setStep] = useState(initialTemplate ? 1 : 0);
@@ -53,12 +53,14 @@ export function CreateSite({ initialTemplate = "", initialName = "" }: { initial
   const [error, setError] = useState("");
   const [built, setBuilt] = useState<{ id: string; slug: string; name: string } | null>(null);
   const T = TYPES.find((t) => t.id === type)!;
+  const look = useCaretLook();
+  const exit = demo ? "/" : "/dashboard";
 
   return (
     <div className="v4 bg-grid min-h-screen">
       <header className="sticky top-0 z-20 border-b border-[var(--v4-line)] bg-white">
         <div className="flex h-16 items-center justify-between px-10 max-md:px-4">
-          <Link href="/dashboard" className="flex items-center gap-2.5" aria-label="Wintech Templates dashboard">
+          <Link href={exit} className="flex items-center gap-2.5" aria-label="Wintech Templates">
             <Mark className="h-[17px] w-[25px]" />
             <span className="text-[18px] font-semibold tracking-[-0.02em] max-sm:hidden">Wintech <span className="font-medium text-[#8a93a6]">Templates</span></span>
           </Link>
@@ -75,15 +77,22 @@ export function CreateSite({ initialTemplate = "", initialName = "" }: { initial
               </li>
             ))}
           </ol>
-          <Link href="/dashboard" className="flex items-center gap-2 text-[14px] font-medium">Save and exit <X className="h-4 w-4" strokeWidth={1.5} /></Link>
+          <Link href={exit} className="flex items-center gap-2 text-[14px] font-medium">{demo ? "Exit" : "Save and exit"} <X className="h-4 w-4" strokeWidth={1.5} /></Link>
         </div>
         <div className="h-[2px] bg-[var(--v4-panel)]"><div className="h-full bg-[var(--v4-blue)] transition-[width] duration-500" style={{ width: `${((step + 1) / 4) * 100}%` }} /></div>
       </header>
 
-      <main className="mx-auto max-w-[960px] px-6 pb-20 pt-14 max-md:px-4 max-md:pt-8">
+      <main key={step} className="page-in mx-auto max-w-[960px] px-6 pb-20 pt-14 max-md:px-4 max-md:pt-8">
+        {demo && (
+          <p className="mb-8 flex flex-wrap items-center gap-2 border border-[rgba(59,91,255,0.25)] bg-[rgba(59,91,255,0.06)] px-4 py-2.5 text-[13px] text-[var(--v4-m75)]">
+            <Sparkles className="h-4 w-4 text-[var(--v4-blue)]" strokeWidth={1.5} />
+            <span><b className="font-semibold text-[var(--v4-ink)]">Try it free, no account needed.</b> Go through every step and see your site. Sign-up opens soon.</span>
+          </p>
+        )}
         {step === 0 && (
           <section>
-            <h1 className="text-[40px] font-semibold tracking-[-0.02em] max-md:text-[30px]">What are you building?</h1>
+            <MascotSays eyes="open" text={`Hi! Let's build your site. ${T.label} is a good pick.`} />
+            <h1 className="mt-6 text-[40px] font-semibold tracking-[-0.02em] max-md:text-[30px]">What are you building?</h1>
             <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Pick the closest fit. One account can run several sites of different types.</p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" role="radiogroup" aria-label="Site type">
               {TYPES.map((t) => {
@@ -106,7 +115,8 @@ export function CreateSite({ initialTemplate = "", initialName = "" }: { initial
 
         {step === 1 && (
           <section>
-            <h1 className="text-[40px] font-semibold tracking-[-0.02em] max-md:text-[30px]">Tell us about your business</h1>
+            <MascotSays eyes={look != null ? "open" : name.trim() ? "happy" : "open"} look={look} text={name.trim() ? `${name.trim()}. I like it.` : "What is your business called?"} />
+            <h1 className="mt-6 text-[40px] font-semibold tracking-[-0.02em] max-md:text-[30px]">Tell us about your business</h1>
             <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Two quick things. Wintech AI does the rest.</p>
             <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
               <div className="flex flex-col gap-5">
@@ -146,19 +156,21 @@ export function CreateSite({ initialTemplate = "", initialName = "" }: { initial
         )}
 
         {step === 2 && (
-          <PickTemplate type={T} pick={pick} setPick={setPick} name={name} sells={sells} onBack={() => setStep(1)} onNext={() => { setError(""); setStep(3); }} />
+          <PickTemplate demo={demo} type={T} pick={pick} setPick={setPick} name={name} sells={sells} onBack={() => setStep(1)} onNext={() => { setError(""); setStep(3); }} />
         )}
 
         {step === 3 && !built && (
           <Building
             name={name.trim()}
             template={pick}
+            demo={demo}
+            look={T.templates[0]}
             brief={`${name.trim()} is a ${T.label.toLowerCase()} business in ${place}, Nigeria. They sell: ${sells}.${ig ? ` Instagram: ${ig}.` : ""} Build a ${T.label.toLowerCase()} site.`}
             onDone={setBuilt}
             onFail={(m) => { setError(m); setStep(2); }}
           />
         )}
-        {step === 3 && built && <Ready site={built} onOpen={() => router.push(`/dashboard/${built.id}`)} />}
+        {step === 3 && built && <Ready site={built} demo={demo} template={pick === "ai" ? (T.templates[0] ?? "store-skincare") : pick} onOpen={() => router.push(demo ? "/demo" : `/dashboard/${built.id}`)} />}
         {step === 2 && error && <p role="alert" className="mt-6 bg-[#fef2f2] px-3 py-2 text-[13px] text-[#b91c1c]">{error}</p>}
       </main>
     </div>
@@ -190,13 +202,13 @@ function Footer({ note, onBack, onNext, nextLabel = "Continue", disabled }: { no
   );
 }
 
-function PickTemplate({ type, pick, setPick, name, sells, onBack, onNext }: { type: (typeof TYPES)[number]; pick: string; setPick: (v: string) => void; name: string; sells: string; onBack: () => void; onNext: () => void }) {
+function PickTemplate({ demo, type, pick, setPick, name, sells, onBack, onNext }: { demo: boolean; type: (typeof TYPES)[number]; pick: string; setPick: (v: string) => void; name: string; sells: string; onBack: () => void; onNext: () => void }) {
   const [all, setAll] = useState(false);
   const ids = all ? CATALOG.map((c) => c.id) : type.templates;
   return (
     <section>
       <h1 className="text-[40px] font-semibold tracking-[-0.02em] max-md:text-[30px]">Pick a template</h1>
-      <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Showing {all ? "every" : type.label.toLowerCase()} template. Every template is mobile-first and wired to your products and Paystack.</p>
+      <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Showing {all ? "every" : type.label.toLowerCase()} template. Every template is mobile-first and wired to your products and WhatsApp orders.</p>
       <div className="mt-6 flex flex-wrap gap-2">
         <button type="button" onClick={() => setAll(false)} className={`h-9 rounded-[2px] border px-3.5 text-[14px] ${!all ? "border-[var(--v4-ink)] bg-[var(--v4-ink)] text-white" : "border-[var(--v4-line)]"}`}>{type.label}</button>
         <button type="button" onClick={() => setAll(true)} className={`h-9 rounded-[2px] border px-3.5 text-[14px] ${all ? "border-[var(--v4-ink)] bg-[var(--v4-ink)] text-white" : "border-[var(--v4-line)]"}`}>All templates</button>
@@ -206,8 +218,8 @@ function PickTemplate({ type, pick, setPick, name, sells, onBack, onNext }: { ty
           className={`flex min-h-[300px] flex-col justify-center gap-3 border p-8 text-left ${pick === "ai" ? "border-[var(--v4-blue)] bg-[rgba(59,91,255,0.05)]" : "border-[var(--v4-line)]"}`}>
           <Mascot eyes="happy" size={48} />
           <span className="mt-2 text-[20px] font-semibold">Let Wintech AI build it</span>
-          <span className="text-[14px] leading-[21px] text-[var(--v4-m75)]">It picks the best layout for {name ? <b className="font-semibold text-[var(--v4-ink)]">{name}</b> : "your business"} ({sells.toLowerCase()}), writes every page and sets up your sections. Uses AI credits.</span>
-          <span className="mt-1 flex items-center gap-3 text-[13px]"><span className="tag tag-sm tag-blue">Recommended</span><span className="text-[var(--v4-m62)]">About 2 minutes</span></span>
+          <span className="text-[14px] leading-[21px] text-[var(--v4-m75)]">It picks the best layout for {name ? <b className="font-semibold text-[var(--v4-ink)]">{name}</b> : "your business"} ({sells.toLowerCase()}), writes every page and sets up your sections.{demo ? "" : " Uses AI credits."}</span>
+          <span className="mt-1 flex items-center gap-3 text-[13px]"><span className="tag tag-sm tag-blue">Recommended</span><span className="text-[var(--v4-m62)]">{demo ? "About 15 seconds in the demo" : "About 2 minutes"}</span></span>
         </button>
         {ids.map((id) => {
           const t = getTemplate(id); const c = CATALOG.find((x) => x.id === id);
@@ -242,7 +254,7 @@ const BUILD_STEPS_TPL: [string, string][] = [
   ["Setting your address", "Hidden until you publish"],
 ];
 
-function Building({ name, template, brief, onDone, onFail }: { name: string; template: string; brief: string; onDone: (s: { id: string; slug: string; name: string }) => void; onFail: (m: string) => void }) {
+function Building({ name, template, brief, demo, look, onDone, onFail }: { name: string; template: string; brief: string; demo: boolean; look: string; onDone: (s: { id: string; slug: string; name: string }) => void; onFail: (m: string) => void }) {
   const ai = template === "ai";
   const steps = ai ? BUILD_STEPS_AI : BUILD_STEPS_TPL;
   const [at, setAt] = useState(0);
@@ -253,7 +265,11 @@ function Building({ name, template, brief, onDone, onFail }: { name: string; tem
     let live = true;
     (async () => {
       try {
-        if (ai) {
+        if (demo) {
+          /* Demo: nothing is saved, the steps play through and the site is shown. */
+          await new Promise((r) => setTimeout(r, 400));
+          if (live) setResult({ id: "demo", slug: normalizeSlug(name) || "yoursite", name });
+        } else if (ai) {
           const res = await fetch("/api/build-site", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ brief }) });
           const data = await res.json().catch(() => ({}));
           if (!res.ok || !data.id) {
@@ -288,33 +304,40 @@ function Building({ name, template, brief, onDone, onFail }: { name: string; tem
   /* Steps tick over on a timer; the last one waits for the real answer. */
   useEffect(() => {
     if (at < steps.length - 1) {
-      const t = setTimeout(() => setAt((a) => a + 1), ai ? 2600 : 700);
+      const t = setTimeout(() => setAt((a) => a + 1), ai ? (demo ? 2200 : 2600) : 700);
       return () => clearTimeout(t);
     }
-    if (result) {
-      const t = setTimeout(() => { setAt(steps.length); onDone(result); }, 600);
+    /* Last step: tick it off first, then move on, so no spinner is left
+       running on the finished list (the "load button" glitch). */
+    if (result && at === steps.length - 1) {
+      const t = setTimeout(() => setAt(steps.length), 500);
       return () => clearTimeout(t);
     }
-  }, [at, result, steps.length, ai, onDone]);
+    if (result && at === steps.length) {
+      const t = setTimeout(() => onDone(result), 700);
+      return () => clearTimeout(t);
+    }
+  }, [at, result, steps.length, ai, demo, onDone]);
 
-  const pct = Math.min(99, Math.round(((at + (result ? 1 : 0.5)) / steps.length) * 100));
-  const preview = getTemplate(ai ? "store-skincare" : template);
-  const eyes: Eyes = result ? "happy" : at % 2 ? "left" : "right";
+  const pct = at >= steps.length ? 100 : Math.min(99, Math.round(((at + (result ? 1 : 0.5)) / steps.length) * 100));
+  const preview = getTemplate(ai ? look : template);
+  const finished = at >= steps.length;
+  const eyes: Eyes = finished ? "happy" : at % 2 ? "left" : "right";
   return (
     <section className="grid gap-10 lg:grid-cols-[1fr_1fr]">
       <div className="flex flex-col gap-5">
         <MascotSays eyes={eyes} text={says[Math.min(at, says.length - 1)]} />
         <div>
           <h1 className="text-[36px] font-semibold tracking-[-0.02em] max-md:text-[28px]">Building {name}</h1>
-          <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Keep this tab open. It takes {ai ? "about two minutes" : "a few seconds"}.</p>
+          <p className="mt-2 text-[16px] text-[var(--v4-m75)]">Keep this tab open. It takes {ai && !demo ? "about two minutes" : "a few seconds"}.</p>
         </div>
         <div>
-          <div className="flex justify-between text-[13px] text-[var(--v4-m75)]"><span>{pct}% done</span><span>{result ? "Almost there" : ai ? "Writing with Wintech AI" : "Setting up"}</span></div>
+          <div className="flex justify-between text-[13px] text-[var(--v4-m75)]"><span>{pct}% done</span><span>{finished ? "Done" : result ? "Almost there" : ai ? "Writing with Wintech AI" : "Setting up"}</span></div>
           <div className="mt-2 h-1.5 bg-[var(--v4-panel)]"><div className="h-full bg-[var(--v4-blue)] transition-[width] duration-700" style={{ width: `${pct}%` }} /></div>
         </div>
         <ol className="hair">
           {steps.map(([t, d], i) => {
-            const done = i < at || (i === at && !!result && at === steps.length);
+            const done = i < at;
             const now = i === at;
             return (
               <li key={t} className={`flex items-center gap-3 border-b border-[var(--v4-line)] px-4 py-3 last:border-0 transition-colors ${now ? "bg-[rgba(59,91,255,0.05)]" : ""}`}>
@@ -328,7 +351,7 @@ function Building({ name, template, brief, onDone, onFail }: { name: string; tem
           })}
         </ol>
       </div>
-      <BrowserPreview template={preview?.id} host={`${normalizeSlug(name) || "yoursite"}.${ROOT_DOMAIN}`} shimmer />
+      <BrowserPreview template={preview?.id} host={`${normalizeSlug(name) || "yoursite"}.${ROOT_DOMAIN}`} shimmer={!finished} />
     </section>
   );
 }
@@ -349,29 +372,30 @@ function BrowserPreview({ template, host, hidden, shimmer }: { template?: string
   );
 }
 
-function Ready({ site, onOpen }: { site: { id: string; slug: string; name: string }; onOpen: () => void }) {
+function Ready({ site, demo, template, onOpen }: { site: { id: string; slug: string; name: string }; demo: boolean; template: string; onOpen: () => void }) {
   const [live, setLive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const host = `${site.slug}.${ROOT_DOMAIN}`;
   const url = `https://${host}`;
-  const [tpl, setTpl] = useState<string>();
+  const [tpl, setTpl] = useState<string | undefined>(demo ? template : undefined);
   useEffect(() => {
+    if (demo) return;
     createClient().from("sites").select("template").eq("id", site.id).single().then(({ data }) => setTpl(data?.template));
-  }, [site.id]);
+  }, [site.id, demo]);
   const share = useMemo(() => `https://wa.me/?text=${encodeURIComponent(`We are online! Visit ${site.name}: ${url}`)}`, [site.name, url]);
 
   return (
     <section className="grid gap-10 lg:grid-cols-[1fr_1fr]">
       <div className="flex flex-col gap-5">
-        <MascotSays eyes="happy" text={live ? "You're live!" : "Done! Have a look."} />
+        <MascotSays eyes="happy" text={live ? (demo ? "That is how going live feels." : "You're live!") : "Done! Have a look."} />
         <div>
           <h1 className="text-[36px] font-semibold tracking-[-0.02em] max-md:text-[28px]">Your site is ready</h1>
-          <p className="mt-2 text-[16px] leading-6 text-[var(--v4-m75)]">{site.name} is built and {live ? "live for everyone" : "hidden until you publish"}. Check it on your phone, then go live.</p>
+          <p className="mt-2 text-[16px] leading-6 text-[var(--v4-m75)]">{demo ? `This is how ${site.name} would look. In the demo nothing is saved, so the address is not live yet.` : `${site.name} is built and ${live ? "live for everyone" : "hidden until you publish"}. Check it on your phone, then go live.`}</p>
         </div>
         <div className="hair flex h-11 items-center gap-2 bg-[var(--v4-soft)] px-3">
           <Globe className="h-4 w-4" strokeWidth={1.5} />
-          <a href={url} target="_blank" rel="noreferrer" className="flex-1 truncate text-[14px]">{host}</a>
+          <a href={demo ? `/templates/${tpl}/preview` : url} target="_blank" rel="noreferrer" className="flex-1 truncate text-[14px]">{host}</a>
           <button type="button" aria-label="Copy address" onClick={() => { navigator.clipboard?.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
             {copied ? <Check className="h-4 w-4 text-[#15803d]" strokeWidth={2} /> : <Copy className="h-4 w-4" strokeWidth={1.5} />}
           </button>
@@ -379,16 +403,16 @@ function Ready({ site, onOpen }: { site: { id: string; slug: string; name: strin
         {copied && <p className="text-[13px] text-[#15803d]" role="status">Copied</p>}
         <div className="flex flex-wrap gap-2">
           {!live && (
-            <button type="button" disabled={busy} className="btn btn-primary" onClick={async () => { setBusy(true); await setPublished(site.id, true); setLive(true); setBusy(false); }}>
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} /> : null} Publish now
+            <button type="button" disabled={busy} className="btn btn-primary" onClick={async () => { setBusy(true); if (demo) await new Promise((r) => setTimeout(r, 700)); else await setPublished(site.id, true); setLive(true); setBusy(false); }}>
+              {busy ? <><Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} /> Publishing</> : "Publish now"}
             </button>
           )}
-          <button type="button" className={`btn ${live ? "btn-primary" : "btn-secondary"}`} onClick={onOpen}>Open dashboard</button>
+          <button type="button" className={`btn ${live ? "btn-primary" : "btn-secondary"}`} onClick={onOpen}>{demo ? "Look around the dashboard" : "Open dashboard"}</button>
         </div>
         <ul className="hair">
           {[
-            [CheckCircle2, "Your pages are written", "Change words, prices or photos any time", `/dashboard/${site.id}/site`, true],
-            [CheckCircle2, "Payments", "Add your bank details to take orders", `/dashboard/${site.id}/settings`, true],
+            [CheckCircle2, "Your pages are written", "Change words, prices or photos any time", demo ? "/demo/site" : `/dashboard/${site.id}/site`, true],
+            [CheckCircle2, "Payments", "Add your bank details to take orders", demo ? "/demo/settings" : `/dashboard/${site.id}/settings`, true],
             [Globe, "Add your own domain", `Optional. Use ${site.slug}.ng`, "/domains", false],
             [Send, "Share on WhatsApp", "Send the link to your customers", share, false],
           ].map(([I, t, d, h, ok]) => {

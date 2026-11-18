@@ -60,9 +60,9 @@ export function DomainSearch({ initial = "glowskin" }: { initial?: string }) {
       {name && (
         <div className="hair mx-auto mt-10 max-w-[760px]" aria-live="polite">
           {PAID.map(([tld, price, tag]) => (
-            <Row key={tld} name={`${name}${tld}`} tag={tag && <span className={`tag tag-sm ${tag === "Best match" ? "tag-blue" : ""}`}>{tag}</span>} price={price} action={<Link href={`/signup?domain=${name}${tld}`} className="btn btn-secondary btn-sm !h-8 !px-3">Add</Link>} />
+            <Row key={tld} name={`${name}${tld}`} tag={tag && <span className={`tag tag-sm ${tag === "Best match" ? "tag-blue" : ""}`}>{tag}</span>} price={price} action={<Link href={`/create?name=${name}`} className="btn btn-secondary btn-sm !h-8 !px-3">Add</Link>} />
           ))}
-          <Row name={`${name}lagos.com`} tag={<span className="tag tag-sm">Includes your city</span>} price="$12 first year" action={<Link href={`/signup?domain=${name}lagos.com`} className="btn btn-secondary btn-sm !h-8 !px-3">Add</Link>} />
+          <Row name={`${name}lagos.com`} tag={<span className="tag tag-sm">Includes your city</span>} price="$12 first year" action={<Link href={`/create?name=${name}`} className="btn btn-secondary btn-sm !h-8 !px-3">Add</Link>} />
           <Row
             name={`${name}.wintechstudio.com`}
             tag={<span className="tag tag-sm tag-blue">Free address</span>}

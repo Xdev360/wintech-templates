@@ -46,7 +46,7 @@ export function AuthShell({
         <img src="/hero/hero-light.svg" alt="" className="w-full max-w-[540px] border border-white/10" />
         <div>
           <p className="text-[20px] font-medium">Your site, your prices, your customers.</p>
-          <p className="mt-2 text-[14px] text-white/65">Free plan. 0% cut of sales. Paystack built in.</p>
+          <p className="mt-2 text-[14px] text-white/65">Free plan. 0% cut of sales. WhatsApp orders built in.</p>
         </div>
       </aside>
     </main>

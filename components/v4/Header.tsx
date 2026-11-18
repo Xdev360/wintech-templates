@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type ComponentType } from "react";
 import {
   ArrowRight, Banknote, BookOpen, Briefcase, Calendar, Camera, Coins, Cookie, CreditCard, File, Globe,
-  HelpCircle, Image as ImageIcon, LayoutTemplate, LifeBuoy, Link2, Mail, Menu, MessageCircle, Palette,
+  HelpCircle, Image as ImageIcon, LayoutDashboard, LayoutTemplate, LifeBuoy, Mail, Menu, MessageCircle, Palette,
   PenLine, Percent, Plus, Scissors, Shield, Shirt, Smartphone, Sparkles, Store, Truck, Upload, Users,
   Utensils, X,
 } from "lucide-react";
@@ -32,15 +32,15 @@ const MENUS: Menu[] = [
         ["AI assistant", Sparkles, "/#ai"],
         ["Domains", Globe, "/domains"],
         ["Mobile friendly", Smartphone, "/templates"],
-        ["Your web address", Link2, "/domains"],
+        ["Dashboard demo", LayoutDashboard, "/demo"],
       ]],
       ["Sell and get paid", [
         ["Online store", Store, "/templates?group=Fashion"],
         ["Bookings", Calendar, "/templates?group=Salons%20and%20beauty"],
-        ["Paystack payments", CreditCard, "/#payments"],
+        ["Orders and payments", CreditCard, "/#payments"],
         ["WhatsApp orders", MessageCircle, "/templates?group=Fashion"],
         ["Delivery areas", Truck, "/templates?group=Fashion"],
-        ["Customers", Users, "/signup"],
+        ["Customers", Users, "/demo/orders"],
       ]],
     ],
     featured: { title: "New in v4", href: "/#how", label: "What changed in v4", template: "booking-salon" },
@@ -67,7 +67,7 @@ const MENUS: Menu[] = [
         ["Collect a waitlist", Mail, "/templates/landing-waitlist"],
         ["Show your work", ImageIcon, "/templates?group=Portfolios"],
         ["Promote an event", Sparkles, "/templates/landing-event"],
-        ["Start from blank", LayoutTemplate, "/signup"],
+        ["Start from blank", LayoutTemplate, "/create"],
       ]],
     ],
     featured: { title: "Featured template", href: "/templates/store-fashion", label: "Fashion store template", template: "store-fashion" },
@@ -202,24 +202,26 @@ export function Header({ signedIn = false, announce = true }: { signedIn?: boole
     <header className="sticky top-0 z-40">
       {announce && (
         <Link
-          href="/#how"
+          href="/create"
           className="flex h-8 items-center justify-center gap-3 border-b border-[rgba(245,245,245,0.12)] px-4 text-[14px] leading-[21px] text-white/75 hover:text-white"
           style={{ background: "linear-gradient(90deg,#111 0%,#1c1c1f 50%,#111 100%)" }}
         >
           <span className="rounded-[2px] bg-white px-2 py-px text-[11px] tracking-[0.04em] text-[var(--v4-ink)]">NEW</span>
           <span className="truncate">
-            <span className="hidden sm:inline">Wintech Templates v4 is here: a new look and an AI assistant that builds your site with you</span>
-            <span className="sm:hidden">v4 is here: a new look and an AI assistant</span>
+            <span className="hidden sm:inline">Try it now: Wintech AI builds your site in minutes. No account needed.</span>
+            <span className="sm:hidden">Build your site now, no account needed</span>
           </span>
           <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={1.5} />
         </Link>
       )}
 
       <div className="border-b border-[var(--v4-line)] bg-white">
-        <div className="wrap flex h-[74px] items-center justify-between gap-6 max-md:h-[64px]">
-          <div className="flex items-center gap-8">
+        {/* v5: logo left, links centred on the page, actions right. */}
+        <div className="wrap grid h-[74px] grid-cols-[1fr_auto_1fr] items-center gap-6 max-lg:flex max-lg:justify-between max-md:h-[64px]">
+          <div className="flex items-center">
             <Logo />
-            <nav className="flex items-center gap-1 max-lg:hidden" aria-label="Main">
+          </div>
+            <nav className="flex items-center gap-4 max-lg:hidden" aria-label="Main">
               {MENUS.slice(0, 2).map((m) => (
                 <NavGroup key={m.label} m={m} open={open} show={show} hide={() => setOpen(null)} seen={!!seen[m.label]} />
               ))}
@@ -227,15 +229,14 @@ export function Header({ signedIn = false, announce = true }: { signedIn?: boole
               <Link href="/domains" className="flex h-9 items-center rounded-[2px] px-3 text-[14px] font-medium hover:bg-[var(--v4-panel)]">Domains</Link>
               <NavGroup m={MENUS[2]} open={open} show={show} hide={() => setOpen(null)} seen={!!seen[MENUS[2].label]} />
             </nav>
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             {signedIn ? (
               <span className="max-sm:hidden"><Btn href="/dashboard" size="sm">Dashboard</Btn></span>
             ) : (
               <>
                 <span className="flex gap-2 max-sm:hidden">
                   <Btn href="/login" kind="ghost" size="sm">Log in</Btn>
-                  <Btn href="/signup" size="sm">Start free</Btn>
+                  <Btn href="/create" size="sm">Start free</Btn>
                 </span>
               </>
             )}
@@ -289,7 +290,7 @@ export function Header({ signedIn = false, announce = true }: { signedIn?: boole
               <Btn href="/dashboard" className="w-full">Dashboard</Btn>
             ) : (
               <>
-                <Btn href="/signup" className="w-full" arrow>Start free</Btn>
+                <Btn href="/create" className="w-full" arrow>Start free</Btn>
                 <Btn href="/login" kind="secondary" className="w-full">Log in</Btn>
               </>
             )}

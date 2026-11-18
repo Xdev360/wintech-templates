@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 
 /* Wintech AI mascot (Figma page 24 "Wintech AI mascot", five eye states).
    The eyes slide when looking left or right, so state changes animate. */
@@ -13,9 +13,10 @@ const EYE_L = "M18.8785 12.8238C18.5712 11.5913 17.3229 10.8413 16.0904 11.1486C
 const EYE_R = "M33.5848 13.9366C33.8922 12.7041 33.1421 11.4558 31.9096 11.1485C30.6771 10.8412 29.4288 11.5912 29.1215 12.8238L27.8151 18.0634C27.5078 19.2959 28.2578 20.5442 29.4904 20.8515C30.7229 21.1588 31.9712 20.4087 32.2785 19.1762L33.5848 13.9366Z";
 const W = "#F4F6FA";
 
-export function Mascot({ eyes = "open", size = 48, className = "" }: { eyes?: Eyes; size?: number; className?: string }) {
+export function Mascot({ eyes = "open", size = 48, className = "", look = null }: { eyes?: Eyes; size?: number; className?: string; look?: number | null }) {
   const id = useId().replace(/:/g, "");
-  const dx = eyes === "left" ? -6.5 : eyes === "right" ? 6.5 : 0;
+  const tracking = look != null && (eyes === "open" || eyes === "left" || eyes === "right");
+  const dx = tracking ? Math.max(-1, Math.min(1, look!)) * 6.5 : eyes === "left" ? -6.5 : eyes === "right" ? 6.5 : 0;
   const round = eyes === "open" || eyes === "left" || eyes === "right";
   return (
     <svg width={size} height={(size * 44) / 48} viewBox="0 0 48 44" fill="none" className={className} aria-hidden="true">
@@ -53,11 +54,49 @@ export function Mascot({ eyes = "open", size = 48, className = "" }: { eyes?: Ey
 }
 
 /** Mascot with a speech bubble; the text fades when it changes. */
-export function MascotSays({ eyes, text }: { eyes: Eyes; text: string }) {
+export function MascotSays({ eyes, text, look = null }: { eyes: Eyes; text: string; look?: number | null }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="mascot-bob" key={eyes}><Mascot eyes={eyes} size={44} /></span>
+      <span className="mascot-bob" key={eyes}><Mascot eyes={eyes} size={44} look={look} /></span>
       <p key={text} className="mascot-say rounded-[2px] bg-[#f3f4f6] px-3 py-2 text-[14px] leading-5 text-[#0a0e17]" aria-live="polite">{text}</p>
     </div>
   );
+}
+
+/* Where the typing caret is, as a number from -1 (start of the field)
+   to 1 (end). The mascot's pupils follow it, so it watches you type.
+   Returns null when no text field is focused, and for passwords. */
+let canvas: HTMLCanvasElement | null = null;
+function caretLook(el: HTMLInputElement): number {
+  const cs = getComputedStyle(el);
+  canvas ??= document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  let pos = el.value.length;
+  try { if (el.selectionStart != null) pos = el.selectionStart; } catch { /* email inputs have no selection */ }
+  const text = el.value.slice(0, pos) || "";
+  let w = text.length * 8;
+  if (ctx) { ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; w = ctx.measureText(text).width; }
+  const x = parseFloat(cs.paddingLeft) + w - el.scrollLeft;
+  const r = Math.max(0, Math.min(1, x / Math.max(1, el.clientWidth)));
+  return r * 2 - 1;
+}
+
+export function useCaretLook(): number | null {
+  const [look, setLook] = useState<number | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const el = document.activeElement;
+        if (el instanceof HTMLInputElement && ["text", "email", "search", "url", "tel"].includes(el.type)) setLook(caretLook(el));
+        else if (el instanceof HTMLTextAreaElement) setLook(Math.min(1, (el.selectionStart % 60) / 30 - 1));
+        else setLook(null);
+      });
+    };
+    const evs = ["selectionchange", "input", "keyup", "focusin", "focusout", "click"] as const;
+    evs.forEach((e) => document.addEventListener(e, update));
+    return () => { cancelAnimationFrame(raf); evs.forEach((e) => document.removeEventListener(e, update)); };
+  }, []);
+  return look;
 }

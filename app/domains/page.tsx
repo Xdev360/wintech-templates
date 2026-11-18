@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const WAYS: [typeof Link2, string, string, string][] = [
   [Link2, "Free address", "name.wintechstudio.com is ready the moment you publish. Free on every plan.", "Every plan"],
-  [Globe, "Buy a domain", "Search, pay with Paystack and we connect it for you. No records to copy.", "Starter and up"],
+  [Globe, "Buy a domain", "Search, ask for it, and we connect it for you. No records to copy.", "Starter and up"],
   [RefreshCw, "Connect one you own", "Keep it at your provider. We show you exactly which two records to add.", "Starter and up"],
 ];
 

@@ -45,7 +45,7 @@ export function AccountShell({
 
 function AccountSidebar({ base, sites, credits }: { base: string; sites: ShellSite[]; credits: number | null }) {
   const rail = useRail();
-  const siteHref = (id: string) => (base === "/dashboard" ? `/dashboard/${id}` : "/dev/dashboard");
+  const siteHref = (id: string) => (base === "/dashboard" ? `/dashboard/${id}` : base.startsWith("/demo") ? "/demo" : "/dev/dashboard");
 
   return (
     <div className="flex min-h-full flex-1 flex-col px-2.5 pb-2.5">

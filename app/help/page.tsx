@@ -6,7 +6,7 @@ import { Btn, EMAIL, WHATSAPP, WHATSAPP_LABEL } from "@/components/v4/ui";
 
 export const metadata: Metadata = {
   title: "Help center · Wintech Templates",
-  description: "Guides for building your site, taking Paystack payments, connecting a domain and using AI credits.",
+  description: "Guides for building your site, taking orders and payments, connecting a domain and using AI credits.",
 };
 
 export default function HelpPage() {

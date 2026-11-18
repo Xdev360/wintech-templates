@@ -91,7 +91,7 @@ export function Shell({
   credits: number | null;
   children: ReactNode;
 }) {
-  const home = base.startsWith("/dev/") ? "/dev/account" : "/dashboard";
+  const home = base.startsWith("/dev/") ? "/dev/account" : base.startsWith("/demo") ? "/demo/account" : "/dashboard";
   const sidebar = <SiteSidebar base={base} home={home} site={site} sites={sites} credits={credits} />;
   const url = `https://${site.slug}.wintechstudio.com`;
 
@@ -203,7 +203,7 @@ function SiteSwitcher({ site, sites, home, dev, rail }: { site: ShellSite; sites
         <div className={`absolute top-[calc(100%+6px)] z-30 w-[232px] rounded-[2px] ${rail ? "left-0" : "inset-x-0 w-auto"}`}><div className="rounded-[2px] border border-[var(--v4-line)] bg-white p-1.5 shadow-[0_16px_40px_-16px_rgba(10,14,23,0.3)]" role="listbox" aria-label="Your sites">
           <p className="px-2.5 pb-1 pt-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-mute-2">Your sites</p>
           {sites.map((s) => (
-            <Link key={s.id} href={dev ? "/dev/dashboard" : `/dashboard/${s.id}`} role="option" aria-selected={s.id === site.id}
+            <Link key={s.id} href={dev ? (home.startsWith("/demo") ? "/demo" : "/dev/dashboard") : `/dashboard/${s.id}`} role="option" aria-selected={s.id === site.id}
               className="flex items-center gap-2.5 rounded-[2px] px-2.5 py-2 hover:bg-[#fafafa]">
               <SiteMark site={s} className="h-7 w-7 text-[12px]" />
               <span className="min-w-0 flex-1 truncate text-[13px]">{s.name}</span>

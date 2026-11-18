@@ -61,7 +61,7 @@ export function PricingPlans() {
               </p>
               <p className="mt-2 text-[12px] text-[var(--v4-m62)]">{pr.other}</p>
               <p className="mt-6 min-h-[42px] text-[15px] leading-[21px] text-[var(--v4-m75)]">{p.note}</p>
-              <Link href={`/signup?plan=${p.name.toLowerCase()}&period=${period}`} className={`btn mt-4 w-full ${p.best ? "btn-primary" : "btn-secondary"}`}>{p.cta}</Link>
+              <Link href="/create" className={`btn mt-4 w-full ${p.best ? "btn-primary" : "btn-secondary"}`}>{p.cta}</Link>
               <ul className="mt-6 flex flex-col gap-3 border-t border-[var(--v4-line)] pt-6">
                 {p.feats.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-[14px] leading-5 text-[var(--v4-m75)]">
@@ -74,7 +74,7 @@ export function PricingPlans() {
         })}
       </div>
       <p className="mt-8 text-center text-[13px] text-[var(--v4-m62)]">
-        Prices include no cut of your sales. Paystack charges its own processing fee on each payment.
+        Prices include no cut of your sales. Customers pay you straight into your own bank account.
       </p>
     </section>
   );
@@ -100,7 +100,8 @@ const COMPARE: [string, [string, Cell[]][]][] = [
     ["Reply drafts a month", ["50", "300", "TBC", "TBC"]],
   ]],
   ["Selling", [
-    ["Paystack checkout: card, transfer, USSD", [false, true, true, true]],
+    ["Bank transfer checkout", [true, true, true, true]],
+    ["Card and USSD checkout", ["Coming later", "Coming later", "Coming later", "Coming later"]],
     ["Orders and receipts", [false, true, true, true]],
     ["Weekly report", [false, false, true, true]],
     ["Mobile manager", [false, false, true, true]],
@@ -210,7 +211,7 @@ export function CreditsExplainer() {
               ))}
             </div>
             <p className="mt-4 flex items-center gap-2 text-[13px] text-[var(--v4-m75)]">
-              <Clock className="h-4 w-4" strokeWidth={S} /> Packs never expire. Pay with Paystack.
+              <Clock className="h-4 w-4" strokeWidth={S} /> Packs never expire.
             </p>
           </div>
         </div>

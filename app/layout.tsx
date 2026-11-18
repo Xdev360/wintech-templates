@@ -3,6 +3,8 @@ import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./templates.css";
 import "./v4.css";
+import { Suspense } from "react";
+import { RouteBar } from "@/components/ui/RouteBar";
 import { figtree, inter } from "@/lib/fonts";
 
 // Inter Tight is what gives Webild its tight, calm headlines. next/font
@@ -22,7 +24,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${interTight.variable} ${inter.variable} ${figtree.variable}`}>
-      <body className="min-h-full antialiased">{children}</body>
+      <body className="min-h-full antialiased">
+        <Suspense fallback={null}><RouteBar /></Suspense>
+        {children}
+      </body>
     </html>
   );
 }
